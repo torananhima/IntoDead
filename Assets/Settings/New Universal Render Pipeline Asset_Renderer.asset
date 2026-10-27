@@ -1,0 +1,137 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5062383335821229658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1848a8ae07042ca95949cb39b778bcd, type: 3}
+  m_Name: VisionEffectRenderFeature
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::GrozaGames.TopDownVision.URP.RenderFeatures.VisionEffectRenderFeature
+  m_Active: 1
+  injectionPoint: 600
+  fetchColorBuffer: 1
+  requirements: 0
+  passMaterial: {fileID: 2100000, guid: 2d09aa46e7a0d454f96850a4818af870, type: 2}
+  passIndex: 0
+  bindDepthStencilAttachment: 0
+--- !u!114 &-4916189391689379111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69a00fe954a04d73b12dc74b964e9b85, type: 3}
+  m_Name: VisionBlurRendererFeature
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::GrozaGames.TopDownVision.URP.RenderFeatures.VisionBlurRendererFeature
+  m_Active: 1
+  settings:
+    horizontalBlur: 0
+    verticalBlur: 0
+  shader: {fileID: 4800000, guid: 55e8e3b88f034d8398f445b3f47bf95b, type: 3}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de640fe3d0db1804a85f9fc8f5cadab6, type: 3}
+  m_Name: New Universal Render Pipeline Asset_Renderer
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalRendererData
+  debugShaders:
+    debugReplacementPS: {fileID: 4800000, guid: cf852408f2e174538bcd9b7fda1c5ae7, type: 3}
+    hdrDebugViewPS: {fileID: 4800000, guid: 573620ae32aec764abd4d728906d2587, type: 3}
+    probeVolumeSamplingDebugComputeShader: {fileID: 7200000, guid: 53626a513ea68ce47b59dc1299fe3959, type: 3}
+  probeVolumeResources:
+    probeVolumeDebugShader: {fileID: 0}
+    probeVolumeFragmentationDebugShader: {fileID: 0}
+    probeVolumeOffsetDebugShader: {fileID: 0}
+    probeVolumeSamplingDebugShader: {fileID: 0}
+    probeSamplingDebugMesh: {fileID: 0}
+    probeSamplingDebugTexture: {fileID: 0}
+    probeVolumeBlendStatesCS: {fileID: 0}
+  m_RendererFeatures:
+  - {fileID: 1421509834243547512}
+  - {fileID: -5062383335821229658}
+  - {fileID: -4916189391689379111}
+  m_RendererFeatureMap: 78a1cfaaa937ba13a6c1847f2dcdbeb9d992cf9bcb2fc6bb
+  m_UseNativeRenderPass: 0
+  xrSystemData: {fileID: 0}
+  postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
+  m_AssetVersion: 3
+  m_PrepassLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_OpaqueLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_TransparentLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_DefaultStencilState:
+    overrideStencilState: 0
+    stencilReference: 0
+    stencilCompareFunction: 8
+    passOperation: 2
+    failOperation: 0
+    zFailOperation: 0
+  m_ShadowTransparentReceive: 1
+  m_RenderingMode: 0
+  m_DepthPrimingMode: 0
+  m_CopyDepthMode: 1
+  m_DepthAttachmentFormat: 0
+  m_DepthTextureFormat: 0
+  m_AccurateGbufferNormals: 0
+  m_IntermediateTextureMode: 1
+--- !u!114 &1421509834243547512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c83d91e77e7e4ea88ad2b280da9e983e, type: 3}
+  m_Name: VisionBlackWorldRenderFeature
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::GrozaGames.TopDownVision.URP.RenderFeatures.VisionBlackWorldRenderFeature
+  m_Active: 1
+  Settings:
+    PassTag: RenderObjectsFeature
+    Event: 300
+    FilterSettings:
+      RenderQueueType: 0
+      LayerMask:
+        serializedVersion: 2
+        m_Bits: 4294967295
+      PassNames: []
+    OverrideMaterial: {fileID: 2100000, guid: 69dde4424bb498e498c1d603b22f9766, type: 2}
+    OverrideMaterialPassIndex: 0
+    OverrideShader: {fileID: -6465566751694194690, guid: d598ef7a0e7e5624393d9c58e4b6eeea, type: 3}
+    OverrideShaderPassIndex: 0
+    OverrideMode: 1
+    OverrideDepthState: 0
+    DepthCompareFunction: 4
+    EnableWrite: 1
+    StencilSettings:
+      overrideStencilState: 0
+      stencilReference: 0
+      stencilCompareFunction: 8
+      passOperation: 0
+      failOperation: 0
+      zFailOperation: 0
+    CameraSettings:
+      OverrideCamera: 0
+      RestoreCamera: 1
+      Offset: {x: 0, y: 0, z: 0, w: 0}
+      CameraFieldOfView: 60
