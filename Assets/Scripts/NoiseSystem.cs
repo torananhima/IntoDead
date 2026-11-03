@@ -10,9 +10,12 @@ public enum NoiseSource
 
 public class NoiseSystem : MonoBehaviour
 {
-    [SerializeField] private static LayerMask zombieLayer;
+    [Header("Prototype")]
+    [SerializeField] private Noise noisePrefab;
+    [SerializeField] private LayerMask zombieLayer;
+    
     private static NoiseSystem instance;
-
+    
     public static NoiseSystem GetInstance()
     {
         if (instance == null)
@@ -21,9 +24,22 @@ public class NoiseSystem : MonoBehaviour
         }
         return instance;
     }
-    public static void NoiseOccur(NoiseSource source, Vector3 sourcePos, float noiseRange)
+    private void Awake()
+    {
+        if(instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+    public void NoiseOccur(NoiseSource source, Vector3 sourcePos, float noiseRange)
     {
         if (source == NoiseSource.Zombie) return;
+        Noise noise = Instantiate(noisePrefab, sourcePos, Quaternion.identity);
+        noise.Initialize(noiseRange);
         Collider[] hits = Physics.OverlapSphere(sourcePos, noiseRange, zombieLayer);
         foreach (Collider hit in hits)
         {

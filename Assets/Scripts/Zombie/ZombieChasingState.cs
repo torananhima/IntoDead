@@ -14,6 +14,11 @@ public class ZombieChasingState : ZombieState
         float distance = Vector3.Distance(zombie.transform.position, player.transform.position);
         if (zombie.IsInLineOfSight())
         {
+            if (distance < 0.5f)
+            {
+                agent.isStopped = true;
+                //Attack!
+            }
             agent.SetDestination(player.transform.position);
         }
     }

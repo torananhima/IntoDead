@@ -14,7 +14,7 @@ public class PlayerInputSystem : MonoBehaviour
 {
     // Continuous inputs
     public Vector2 MoveInput { get; private set; }
-    public Vector2 LookInput { get; private set; }
+    public Vector2 MousePos { get; private set; }
 
     // Button events: true = pressed, false = released
     public event Action<bool> InputOnSprint;
@@ -24,6 +24,8 @@ public class PlayerInputSystem : MonoBehaviour
     public event Action<bool> InputOnDrop;
     public event Action<bool> InputOnReload;
     public event Action<bool> InputOnPause;
+
+    private Vector2 halfScreenResolution;
 
     private PlayerInput playerInput;
     private bool controlsDisabled;
@@ -44,6 +46,7 @@ public class PlayerInputSystem : MonoBehaviour
     private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
+        halfScreenResolution = new Vector2(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2);
     }
 
     private void OnEnable()
@@ -64,7 +67,6 @@ public class PlayerInputSystem : MonoBehaviour
             return;
 
         string actionName = context.action.name;
-
         switch (actionName.ToLowerInvariant())
         {
             case "move":
@@ -72,7 +74,10 @@ public class PlayerInputSystem : MonoBehaviour
                 break;
 
             case "look":
-                LookInput = context.ReadValue<Vector2>();
+                Vector2 newPos = Mouse.current.position.ReadValue();
+                newPos.x -= halfScreenResolution.x;
+                newPos.y -= halfScreenResolution.y;
+                MousePos = newPos;
                 break;
 
             case "sprint":
@@ -180,7 +185,7 @@ public class PlayerInputSystem : MonoBehaviour
     private void ResetInputs()
     {
         MoveInput = Vector2.zero;
-        LookInput = Vector2.zero;
+        MousePos = Vector2.zero;
 
         foreach (string actionName in new List<string>(buttonStates.Keys))
         {

@@ -200,12 +200,6 @@
       },
       "url": "https://packages.unity.com"
     },
-    "gg.groza.top-down-vision": {
-      "version": "file:C:/Users/Tran/Downloads/unity-top-down-vision-master/unity-top-down-vision-master",
-      "depth": 0,
-      "source": "local",
-      "dependencies": {}
-    },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,

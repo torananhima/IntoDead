@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,6 +17,8 @@ public class Zombie : Character
     [SerializeField] private float _attackRange = 5f;
     [SerializeField] private float _attackDamage = 10f;
 
+    [Header("Reference")]
+    [SerializeField] GameObject viewModel;
     public float visionDetectRange
     {
         get { return _visionDetectRange; }
@@ -80,6 +83,8 @@ public class Zombie : Character
         }
 
         bool visible = player._los.CanSee(transform);
+        viewModel.SetActive(visible);
+
     }
 
     public void ChangeState(ZombieState newState)

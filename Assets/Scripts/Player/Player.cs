@@ -1,3 +1,4 @@
+using GrozaGames.TopDownVision.MonoBehaviours;
 using System.Collections;
 using UnityEngine;
 
@@ -10,13 +11,13 @@ public class Player : Character
     private float moveNoiseProgress;
 
     public PlayerInputSystem _input { get; private set; }
-    public PlayerLineOfSight _los { get; private set; }
+    public VisionOrigin _los { get; private set; }
     PlayerMovement _movement;
 
     private void Awake()
     {
         _input = GetComponent<PlayerInputSystem>();
-        _los = GetComponent<PlayerLineOfSight>();
+        _los = GetComponent<VisionOrigin>();
         _movement = GetComponent<PlayerMovement>();
         ChangeMovement(MovementType.Walk);
 
@@ -24,14 +25,11 @@ public class Player : Character
     }
     private void Update()
     {
-        if (_movement)
-        {
-
-        }
         if(moveNoiseProgress >= 1f)
         {
             moveNoiseProgress = 0;
-            NoiseSystem.NoiseOccur(NoiseSource.Player, transform.position, moveSpeed * noiseRangeRatio);
+            NoiseSystem.GetInstance().NoiseOccur(NoiseSource.Player, transform.position, moveSpeed * noiseRangeRatio);
+            Debug.Log("Noise occur");
         }
     }
 
@@ -44,7 +42,9 @@ public class Player : Character
         {
             if (_input.MoveInput != Vector2.zero) moveNoiseProgress += moveSpeed * noiseProgressRatio * Time.deltaTime;
             _movement.Move(_input.MoveInput, moveSpeed);
-            if(_input.MoveInput == Vector2.zero)
+            _movement.Look(_input.MousePos);
+
+            if (_input.MoveInput == Vector2.zero)
             {
                 timer += Time.deltaTime;
                 if(timer >= 0.1f)

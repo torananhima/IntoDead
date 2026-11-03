@@ -87,4 +87,10 @@ public class PlayerMovement : MonoBehaviour
         player.isSprinting = false;
         player.ChangeMovement(MovementType.Walk);
     }
+
+    public void Look(Vector2 lookInput)
+    {
+        Vector2 lookPos = new Vector2(lookInput.x + transform.position.x, lookInput.y + transform.position.z);
+        transform.LookAt(new Vector3(lookPos.x, transform.position.y, lookPos.y));
+    }
 }
