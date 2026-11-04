@@ -89,12 +89,12 @@ public class Character : MonoBehaviour
         Debug.Log(gameObject.name + " is dead.");
     }
 
-    protected virtual void TakeDamage(int damageTaken)
+    public virtual void TakeDamage(int damageTaken)
     {
         _currentHp -= damageTaken;
     }
 
-    protected virtual void Heal(int healAmount)
+    public virtual void Heal(int healAmount)
     {
         _currentHp += healAmount;
     }
