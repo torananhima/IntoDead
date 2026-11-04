@@ -12,8 +12,8 @@ public abstract class ItemData : ScriptableObject
     [SerializeField]private string itemId;
     [SerializeField]private string displayName;
     [SerializeField]private string description;
-    [SerializeField]private Sprite icon;
-    [SerializeField]private GameObject worldPrefab;
+    public Sprite icon;
+    public GameObject worldPrefab;
     [SerializeField]private ItemType itemType;
     [SerializeField]private bool isStackable;
     private int maxStackSize;

@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class DroppedItem : MonoBehaviour, IInteractable
 {
-    [Header("Debug")]
-    [SerializeField] private ItemData itemData;
     [Header("Pickup")]
     [SerializeField] private ItemInstance item;
     [SerializeField] private bool pickupEnabled;
@@ -11,68 +9,53 @@ public class DroppedItem : MonoBehaviour, IInteractable
 
     private float pickupTime;
 
-    private void Start()
+    public void Initialize(ItemInstance itemInstance)
     {
-        if (itemData == null)
+        if (itemInstance == null)
         {
-            Debug.LogWarning("DroppedItem has no item assigned.");
+            Debug.LogWarning("DroppedItem received null ItemInstance.");
             Destroy(gameObject);
             return;
         }
-        else
-        {
-            item = new ItemInstance(itemData, 1);
-            Debug.Log($"{item}");
-            //ItemInstance itemInstance = new ItemInstance(itemData, 1);
-            //Initialize(itemInstance);
-        }
-    }
 
-    public void Initialize(ItemInstance itemInstance)
-    {
         item = itemInstance;
         pickupEnabled = false;
         pickupTime = Time.time + pickupDelay;
     }
 
-    public bool CanInteract(GameObject interactor)
+    private void Update()
     {
         if (!pickupEnabled && Time.time >= pickupTime)
         {
             pickupEnabled = true;
         }
+    }
 
-        Debug.Log($"CanInteract check for {interactor.name}: pickupEnabled={pickupEnabled}, item={(item != null ? item.itemData.name : "null")}");
-        Debug.Log($"{item}");
+    public bool CanInteract(GameObject interactor)
+    {
         return pickupEnabled &&
                item != null &&
+               !item.IsEmpty() &&
                interactor != null &&
-               interactor.GetComponent<PlayerInventory>() != null;
+               interactor.TryGetComponent<PlayerInventory>(out _);
     }
 
     public void Interact(GameObject interactor)
     {
-        Debug.Log($"Player {interactor.name} is trying to pick up {item.itemData.name}.");
         TryPickup(interactor);
     }
 
     public bool TryPickup(GameObject interactor)
     {
         if (!CanInteract(interactor))
-        {
             return false;
-        }
 
         PlayerInventory inventory = interactor.GetComponent<PlayerInventory>();
 
         if (!inventory.TryAddItem(item))
-        {
             return false;
-        }
 
-        item.transform.SetParent(inventory.transform);
         Destroy(gameObject);
-
         return true;
     }
 

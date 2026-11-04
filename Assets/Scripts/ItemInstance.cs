@@ -1,11 +1,14 @@
 using UnityEngine;
 
-public class ItemInstance : MonoBehaviour
+public class ItemInstance
 {
-    [SerializeField] public ItemData itemData;
+    public ItemData itemData;
     [SerializeField] private int amount;
-    [SerializeField] public int currentAmmo;
+    public int currentAmmo;
     [SerializeField] private string instanceId;
+
+    public int Amount => amount;
+    public string InstanceId => instanceId;
 
     public ItemInstance(ItemData data, int initialAmount)
     {
@@ -15,17 +18,17 @@ public class ItemInstance : MonoBehaviour
     }
     public int AddAmount(int amountToAdd)
     {
+        if (amountToAdd <= 0) return amount;
+
         amount += amountToAdd;
         return amount;
     }
 
     public int RemoveAmount(int amountToRemove)
     {
-        amount -= amountToRemove;
-        if(amount < 0)
-        {
-            amount = 0;
-        }
+        if (amountToRemove <= 0) return amount;
+
+        amount = Mathf.Max(0, amount - amountToRemove);
         return amount;
     }
 
@@ -37,8 +40,8 @@ public class ItemInstance : MonoBehaviour
     public ItemInstance Clone()
     {
         ItemInstance clone = new ItemInstance(itemData, amount);
-        clone.currentAmmo = this.currentAmmo;
-        clone.instanceId = this.instanceId;
+        clone.currentAmmo = currentAmmo;
+
         return clone;
     }
 }

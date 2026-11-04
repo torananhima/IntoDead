@@ -5,12 +5,23 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     [SerializeField] private int maxSlots = 10;
-    [SerializeField] private int selectedSlot = 0;
+    public int selectedSlot = 0;
 
-    private readonly List<ItemInstance> items = new List<ItemInstance>();
+    public readonly List<ItemInstance> items = new List<ItemInstance>();
 
     public event Action OnInventoryChanged;
+    Player player;
 
+    private void Start()
+    {
+        player = GetComponent<Player>();
+        player._input.InputOnChangeSlot += SelectSlot;
+    }
+
+    private void OnDisable()
+    {
+        player._input.InputOnChangeSlot -= SelectSlot;
+    }
     public bool TryAddItem(ItemInstance item)
     {
         if (item == null || !HasSpaceForItem(item))
@@ -20,9 +31,9 @@ public class PlayerInventory : MonoBehaviour
 
         items.Add(item);
 
-        if (selectedSlot >= items.Count)
+        if (selectedSlot >= maxSlots)
         {
-            selectedSlot = items.Count - 1;
+            selectedSlot = maxSlots - 1;
         }
 
         OnInventoryChanged?.Invoke();
@@ -89,15 +100,20 @@ public class PlayerInventory : MonoBehaviour
         return GetItem(selectedSlot);
     }
 
+    private void SelectSlot(int slot)
+    {
+        TrySelectSlot(slot);
+    }
     public bool TrySelectSlot(int slot)
     {
+        selectedSlot = slot;
+        OnInventoryChanged?.Invoke();
+
         if (slot < 0 || slot >= items.Count)
         {
             return false;
         }
 
-        selectedSlot = slot;
-        OnInventoryChanged?.Invoke();
         return true;
     }
 

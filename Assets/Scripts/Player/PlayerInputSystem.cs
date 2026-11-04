@@ -19,11 +19,12 @@ public class PlayerInputSystem : MonoBehaviour
     // Button events: true = pressed, false = released
     public event Action<bool> InputOnSprint;
     public event Action<bool> InputOnCrouch;
-    public event Action<bool> InputOnUse;
-    public event Action<bool> InputOnInteract;
-    public event Action<bool> InputOnDrop;
-    public event Action<bool> InputOnReload;
-    public event Action<bool> InputOnPause;
+    public event Action InputOnUse;
+    public event Action InputOnInteract;
+    public event Action InputOnDrop;
+    public event Action InputOnReload;
+    public event Action<int> InputOnChangeSlot;
+    public event Action InputOnPause;
 
     private Vector2 halfScreenResolution;
 
@@ -39,6 +40,10 @@ public class PlayerInputSystem : MonoBehaviour
             { "interact", false },
             { "drop", false },
             { "reload", false },
+            { "slot1", false },
+            { "slot2", false },
+            { "slot3", false },
+            { "slot4", false },
             { "pause", false },
             { "esc", false }
         };
@@ -87,7 +92,10 @@ public class PlayerInputSystem : MonoBehaviour
             case "drop":
             case "reload":
             case "pause":
-            case "esc":
+            case "slot1":
+            case "slot2":
+            case "slot3":
+            case "slot4":
                 HandleButtonInput(context);
                 break;
         }
@@ -137,26 +145,37 @@ public class PlayerInputSystem : MonoBehaviour
 
             case "use":
                 Debug.Log("UseInput invoke");
-                InputOnUse?.Invoke(pressed);
+                InputOnUse?.Invoke();
                 break;
 
             case "interact":
                 Debug.Log("InteractInput invoke");
-                InputOnInteract?.Invoke(pressed);
+                InputOnInteract?.Invoke();
                 break;
 
             case "drop":
                 Debug.Log("DropInput invoke");
-                InputOnDrop?.Invoke(pressed);
+                InputOnDrop?.Invoke();
                 break;
 
             case "reload":
-                InputOnReload?.Invoke(pressed);
+                InputOnReload?.Invoke();
                 break;
-
+            case "slot1":
+                ChangeSlot(previousState, pressed, 1);
+                break;
+            case "slot2":
+                ChangeSlot(previousState, pressed, 2);
+                break;
+            case "slot3":
+                ChangeSlot(previousState, pressed, 3);
+                break;
+            case "slot4":
+                ChangeSlot(previousState, pressed, 4);
+                break;
             case "pause":
             case "esc":
-                InputOnPause?.Invoke(pressed);
+                InputOnPause?.Invoke();
                 break;
         }
     }
@@ -205,26 +224,39 @@ public class PlayerInputSystem : MonoBehaviour
                     break;
 
                 case "use":
-                    InputOnUse?.Invoke(false);
+                    InputOnUse?.Invoke();
                     break;
 
                 case "interact":
-                    InputOnInteract?.Invoke(false);
+                    InputOnInteract?.Invoke();
                     break;
 
                 case "drop":
-                    InputOnDrop?.Invoke(false);
+                    InputOnDrop?.Invoke();
                     break;
 
                 case "reload":
-                    InputOnReload?.Invoke(false);
+                    InputOnReload?.Invoke();
                     break;
-
+                case "slot1":
+                case "slot2":
+                case "slot3":
+                case "slot4":
+                    InputOnChangeSlot?.Invoke(0);
+                    break;
                 case "pause":
                 case "esc":
-                    InputOnPause?.Invoke(false);
+                    InputOnPause?.Invoke();
                     break;
             }
+        }
+    }
+
+    private void ChangeSlot(bool previousPressed, bool isPressed, int slot)
+    {
+        if (previousPressed == false && isPressed == true)
+        {
+            InputOnChangeSlot?.Invoke(slot - 1);
         }
     }
 }

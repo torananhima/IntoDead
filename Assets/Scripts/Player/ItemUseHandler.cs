@@ -6,19 +6,29 @@ public class ItemUseHandler : MonoBehaviour
 
     private HealingItemBehavior healingBehavior;
     private RangedWeaponBehavior rangedWeaponBehavior;
-
+    Player player;
     private void Awake()
     {
         healingBehavior = new HealingItemBehavior();
         rangedWeaponBehavior = new RangedWeaponBehavior();
+        player = GetComponent<Player>();
+        inventory = GetComponent<PlayerInventory>();
+    }
+    private void Start()
+    {
+        player._input.InputOnUse += TryUseSelectedItem;
     }
 
-    public bool TryUseSelectedItem()
+    private void OnDisable()
+    {
+        player._input.InputOnUse -= TryUseSelectedItem;
+    }
+    public void TryUseSelectedItem()
     {
         ItemInstance item = inventory.GetSelectedItem();
 
         if (item == null || item.itemData == null)
-            return false;
+            return;
 
         ItemUseContext context = new ItemUseContext(
             gameObject,
@@ -28,14 +38,12 @@ public class ItemUseHandler : MonoBehaviour
         IItemBehavior behavior = GetBehavior(item.itemData);
 
         if (behavior == null)
-            return false;
+            return;
 
         if (!behavior.CanUse(context))
-            return false;
+            return;
 
         behavior.Use(context);
-
-        return true;
     }
 
     private IItemBehavior GetBehavior(ItemData data)

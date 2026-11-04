@@ -10,11 +10,10 @@ public class Player : Character
     [SerializeField] private float noiseRangeRatio = 0.2f;
     private float moveNoiseProgress;
 
-    [SerializeField] float pickupRange = 3f;
-
     public PlayerInputSystem _input { get; private set; }
     public VisionOrigin _los { get; private set; }
     public PlayerInventory _inventory { get; private set; }
+    public PlayerInteract _interact { get; private set; }
     PlayerMovement _movement;
 
     private void Awake()
@@ -22,17 +21,14 @@ public class Player : Character
         _input = GetComponent<PlayerInputSystem>();
         _los = GetComponent<VisionOrigin>();
         _inventory = GetComponent<PlayerInventory>();
+        _interact = GetComponent<PlayerInteract>();
         _movement = GetComponent<PlayerMovement>();
         ChangeMovement(MovementType.Walk);
 
         StartCoroutine(HandleMovement());
-        _input.InputOnInteract += Interact;
     }
 
-    private void OnDisable()
-    {
-        _input.InputOnInteract -= Interact;
-    }
+
     private void Update()
     {
         if(moveNoiseProgress >= 1f)
@@ -43,6 +39,11 @@ public class Player : Character
         }
     }
 
+    public override void TakeDamage(int damageTaken)
+    {
+        base.TakeDamage(damageTaken);
+        UIManager.instance.UpdateHpBar(hp, maxHp);
+    }
 
     IEnumerator HandleMovement()
     {
@@ -70,29 +71,5 @@ public class Player : Character
         }
     }
 
-    private void Interact(bool isPressed)
-    {
-        Debug.Log("Interact input received");
-        if (!isPressed) return;
-        Debug.Log("Interact input pressed");
 
-        Collider[] colliders = Physics.OverlapSphere(transform.position, pickupRange);
-        foreach (var collider in colliders)
-        {
-            DroppedItem droppedItem = collider.GetComponent<DroppedItem>();
-            Debug.Log($"Found dropped item: {droppedItem?.name ?? "null"}");
-            Debug.Log($"Can interact: {droppedItem?.CanInteract(gameObject) ?? false}");
-            if (droppedItem != null && droppedItem.CanInteract(gameObject))
-            {
-                droppedItem.Interact(gameObject);
-                break;
-            }
-        }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, pickupRange);
-    }
 }
