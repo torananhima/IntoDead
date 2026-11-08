@@ -1,11 +1,20 @@
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : MonoBehaviour, IPoolable
 {
     public float speed = 10f;
     Vector3 direction;
     int damaage;
 
+
+    public void OnPoolSpawn()
+    {
+        gameObject.SetActive(true);
+    }
+    public void OnPoolDespawn()
+    {
+        gameObject.SetActive(false);
+    }
     public void Initialize(int damage, Vector3 dir)
     {
         direction = dir.normalized;
@@ -28,11 +37,11 @@ public class Bullet : MonoBehaviour
                     enemy.TakeDamage(damaage);
                 }
             }
-            Destroy(gameObject);
+            ObjectPoolManager.Instance.Despawn(gameObject);
         }
         else if (other.CompareTag("Environment"))
         {
-            Destroy(gameObject);
+            ObjectPoolManager.Instance.Despawn(gameObject);
         }
     }
 }

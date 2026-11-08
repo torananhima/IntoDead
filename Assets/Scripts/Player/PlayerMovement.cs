@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Windows;
 
@@ -9,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
 
     Player player;
     CharacterController _controller;
+    public Action OnMove;
 
     private void Awake()
     {
@@ -80,6 +82,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 moveDir = new Vector3(input.x, 0, input.y);
         _controller.Move(moveDir * moveSpeed * Time.deltaTime);
+        if (input != Vector2.zero) OnMove?.Invoke();
     }
 
     public void ResetMovementState()

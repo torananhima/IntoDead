@@ -551,8 +551,6 @@ namespace GrozaGames.TopDownVision.MonoBehaviours
                 Vector3.Angle(forward, flatOffset)
                     <= _coneAngle * 0.5f;
 
-            Debug.Log(inAmbientRange + " | " + inFlashlight);
-
             if (!inAmbientRange && !inFlashlight)
                 return false;
 

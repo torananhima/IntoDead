@@ -5,6 +5,12 @@ using UnityEngine;
 
 public class Player : Character
 {
+    private float maxStamina = 100;
+    private float currentStamina = 100;
+    public float _currentStamina
+    {
+        get { return  _currentStamina; }
+    }
     [Header("Noise")]
     [SerializeField] private float noiseProgressRatio = 0.1f;
     [SerializeField] private float noiseRangeRatio = 0.2f;
@@ -14,7 +20,7 @@ public class Player : Character
     public VisionOrigin _los { get; private set; }
     public PlayerInventory _inventory { get; private set; }
     public PlayerInteract _interact { get; private set; }
-    PlayerMovement _movement;
+    public PlayerMovement _movement { get; private set; }
 
     private void Awake()
     {
@@ -35,7 +41,6 @@ public class Player : Character
         {
             moveNoiseProgress = 0;
             NoiseSystem.GetInstance().NoiseOccur(NoiseSource.Player, transform.position, moveSpeed * noiseRangeRatio);
-            Debug.Log("Noise occur");
         }
     }
 
