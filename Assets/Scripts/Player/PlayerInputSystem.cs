@@ -14,6 +14,7 @@ public class PlayerInputSystem : MonoBehaviour
 {
     // Continuous inputs
     public Vector2 MoveInput { get; private set; }
+    public Vector2 WorldPoint { get; private set; }
     public Vector2 MousePos { get; private set; }
 
     // Button events: true = pressed, false = released
@@ -77,7 +78,9 @@ public class PlayerInputSystem : MonoBehaviour
                 Vector2 newPos = Mouse.current.position.ReadValue();
                 newPos.x -= halfScreenResolution.x;
                 newPos.y -= halfScreenResolution.y;
+                Vector2 worldPoint = Camera.main.ScreenToWorldPoint(MoveInput);
                 MousePos = newPos;
+                WorldPoint = worldPoint;
                 break;
 
             case "sprint":

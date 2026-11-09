@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: a20bfcadcaf95514491063c6bc9fa12b
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: dda12f74ff9116a42b23482252b2c482, type: 3}
+  _fileAsset: {fileID: 6013892654665635331, guid: a20bfcadcaf95514491063c6bc9fa12b,
+    type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 413242
+  packageName: Concrete Wall (Eroded) Texture & Material Vol. 11
+  packageVersion: 1.0
+  assetPath: Assets/Concrete Wall (Eroded) Texture & Material Vol 11/Wall (Eroded)
+    VOL 11.sbsar
+  uploadId: 1009620

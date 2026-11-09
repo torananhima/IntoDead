@@ -3,26 +3,18 @@ using UnityEngine;
 public class Noise : MonoBehaviour
 {
     [SerializeField] float spreadSpeed = 2f;
-    float maxDistance;
-    public void Initialize(float maxDistance)
+    float targetScale;
+    public void Initialize(float range)
     {
-        this.maxDistance = maxDistance;
+        targetScale = range / 5;
     }
 
     private void Update()
     {
-        transform.localScale += Vector3.Lerp(transform.localScale, Vector3.one * maxDistance, spreadSpeed * Time.deltaTime);
-        if (transform.localScale.x >= maxDistance)
+        transform.localScale = Vector3.Lerp(transform.localScale, targetScale * Vector3.one, spreadSpeed * Time.deltaTime);
+        if (transform.localScale.x >= targetScale - 0.001f)
         {
             Destroy(gameObject);
-        }
-    }
-
-    private void OnTriggerEnter(Collider collider)
-    {
-        if (collider.TryGetComponent(out Zombie zombie))
-        {
-            zombie.DetectNoise(transform.position);
         }
     }
 }
