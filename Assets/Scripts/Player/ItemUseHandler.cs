@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class ItemUseHandler : MonoBehaviour 
@@ -8,6 +9,7 @@ public class ItemUseHandler : MonoBehaviour
     private RangedWeaponBehavior rangedWeaponBehavior;
     Player player;
     Camera mainCam;
+
     private void Awake()
     {
         healingBehavior = new HealingItemBehavior();
@@ -48,6 +50,7 @@ public class ItemUseHandler : MonoBehaviour
             return;
 
         behavior.Use(context);
+        inventory.TryRemoveItem(item);
     }
 
     public void TryReload()

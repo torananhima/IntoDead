@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -51,15 +52,25 @@ public class UIManager : MonoBehaviour
         playerInventory = player.GetComponent<PlayerInventory>();
 
         playerInventory.OnInventoryChanged += ChangeInventorySlot;
-        ChangeInventorySlot();
-
-        HideInteractIndicator();
+;
 
         player._interact.OnInteractableInRange += ShowInteractIndicator;
         player._interact.OnNoInteractableInRange += HideInteractIndicator;
 
         halfWidthScreen = Screen.width / 2;
         halfHeightScreen = Screen.height / 2;
+
+        StartCoroutine(DelayInitializeUI());
+        HideInteractIndicator();
+    }
+
+    IEnumerator DelayInitializeUI()
+    {
+        yield return null;
+
+        Canvas.ForceUpdateCanvases();
+        ChangeInventorySlot();
+
     }
     private void OnDisable()
     {
@@ -80,6 +91,7 @@ public class UIManager : MonoBehaviour
             else
             {
                 //inventorySlots_image[i].gameObject.SetActive(false);
+                inventorySlots_image[i].sprite = null;
             }
             if (i >= inventorySlots_image.Length)
             {
@@ -93,8 +105,11 @@ public class UIManager : MonoBehaviour
 
     public void ChangeSelectingSlot()
     {
-        slotIndicator.GetComponent<RectTransform>().position = inventorySlots_image[player._inventory.selectedSlot].GetComponent<RectTransform>().position;
 
+        RectTransform indicator = slotIndicator.GetComponent<RectTransform>();
+        RectTransform slot = inventorySlots_image[playerInventory.selectedSlot].GetComponent<RectTransform>();
+
+        indicator.position = slot.position;
     }
 
     public void UpdateHpBar(int currentHp, int maxHp)

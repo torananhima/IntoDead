@@ -40,6 +40,13 @@ public class PlayerInventory : MonoBehaviour
             return false;
         }
 
+        AddItem(item);
+        return true;
+    }
+
+    public void AddItem(ItemInstance item)
+    {
+
         items.Add(item);
 
         if (selectedSlot >= maxSlots)
@@ -48,7 +55,7 @@ public class PlayerInventory : MonoBehaviour
         }
 
         OnInventoryChanged?.Invoke();
-        return true;
+        return;
     }
 
     public bool TryRemoveItem(ItemInstance item)
@@ -202,6 +209,15 @@ public class PlayerInventory : MonoBehaviour
                 break;
             default:
                 break;
+        }
+    }
+
+    [ContextMenu("Check Inventory")]
+    public void DebugItemsInInventory()
+    {
+        foreach(ItemInstance item in items)
+        {
+            Debug.Log($"{item.itemData.name} | {item.Amount}, Ammo: {item.currentAmmo}");
         }
     }
 }

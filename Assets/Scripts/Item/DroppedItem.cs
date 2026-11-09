@@ -45,25 +45,28 @@ public class DroppedItem : InteractableObject
         TryPickup(interactor);
     }
 
-    public bool TryPickup(GameObject interactor)
+    public void TryPickup(GameObject interactor)
     {
         if (!CanInteract(interactor))
-            return false;
+            return;
 
         PlayerInventory inventory = interactor.GetComponent<PlayerInventory>();
 
         if (!inventory.TryAddItem(item))
-            return false;
-
-        Destroy(gameObject);
-        return true;
+            return;
     }
 
+    public void PickupCompleted()
+    {
+        //Debug.Log("Pickup complete");
+        Destroy(gameObject);
+    }
     public void DespawnIfEmpty()
     {
         if (item == null || item.IsEmpty())
         {
-            Destroy(gameObject);
+            Debug.Log("Item empty");
+            //Destroy(gameObject);
         }
     }
 }

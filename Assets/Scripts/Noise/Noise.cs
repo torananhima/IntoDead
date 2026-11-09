@@ -7,11 +7,11 @@ public class Noise : MonoBehaviour, IPoolable
     Vector3 defaultScale = Vector3.zero;
     public void OnPoolSpawn()
     {
+        gameObject.SetActive(true);
         if (defaultScale == Vector3.zero)
         {
             defaultScale = transform.localScale;
         }
-        gameObject.SetActive(true);
     }
     public void OnPoolDespawn()
     {

@@ -15,7 +15,7 @@ MonoBehaviour:
   itemId: 0
   displayName: Medkit
   description: heealing item
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 8d64f183e79b2534b8087fb025157003, type: 3}
   worldPrefab: {fileID: 0}
   itemType: 2
   isStackable: 0

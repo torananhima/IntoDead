@@ -52,17 +52,25 @@ public class PlayerInteract : MonoBehaviour
                 closestObj = interactableObject;
             }
         }
-        if (closestInteractable != null && closestObj == null) OnNoInteractableInRange?.Invoke();
+        if (closestObj == null) OnNoInteractableInRange?.Invoke();
         else if(closestObj != null) OnInteractableInRange?.Invoke(closestObj.transform, closestObj.actionName);
         closestInteractable = closestObj;
     }
     private void Interact()
     {
+        if (closestInteractable == null) return;
         if(closestInteractable.TryGetComponent(out DroppedItem droppedItem))
         {
+            if(droppedItem == null)
+            {
+                Debug.Log("No droppd item");
+                return;
+            }
             TryPickUp(droppedItem);
         }
         Debug.Log($"Can interact: {closestInteractable?.CanInteract(gameObject) ?? false}");
+        droppedItem.PickupCompleted();
+        TryInteract();
     }
 
     private void TryPickUp(DroppedItem droppedItem)
