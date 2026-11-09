@@ -12,8 +12,11 @@ public class Player : Character
         get { return  _currentStamina; }
     }
     [Header("Noise")]
-    [SerializeField] private float noiseProgressRatio = 0.1f;
-    [SerializeField] private float noiseRangeRatio = 0.2f;
+    [Min(0)][SerializeField] private float noiseProgressRatio = 0.1f;
+    [Min(0)][SerializeField] private float noiseRangeRatio = 1f;
+    [Min(0)][SerializeField] private float walkMultRatio = 1f;
+    [Min(0)][SerializeField] private float sprintMultRatio = 1f;
+    [Min(0)][SerializeField] private float crouchMultRatio = 1f;
     private float moveNoiseProgress;
 
     public PlayerInputSystem _input { get; private set; }
@@ -33,14 +36,14 @@ public class Player : Character
 
         StartCoroutine(HandleMovement());
     }
-
-
-    private void Update()
+    protected override void Update()
     {
-        if(moveNoiseProgress >= 1f)
+        base.Update();
+        if (moveNoiseProgress >= 1f)
         {
             moveNoiseProgress = 0;
-            NoiseSystem.GetInstance().NoiseOccur(NoiseSource.Player, transform.position, moveSpeed * noiseRangeRatio);
+            NoiseSystem.GetInstance().NoiseOccur(NoiseSource.Player, transform.position, moveSpeed * GetNoiseRnage(movementState));
+            Debug.Log("Noise occur");
         }
     }
 
@@ -63,7 +66,7 @@ public class Player : Character
             if (_input.MoveInput == Vector2.zero)
             {
                 timer += Time.deltaTime;
-                if(timer >= 0.1f)
+                if (timer >= 0.1f)
                 {
                     _movement.ResetMovementState();
                 }
@@ -76,5 +79,17 @@ public class Player : Character
         }
     }
 
-
+    private float GetNoiseRnage(MovementType movementType)
+    {
+        switch (movementType)
+        {
+            case MovementType.Walk:
+                return noiseRangeRatio * walkMultRatio;
+            case MovementType.Sprint:
+                return noiseRangeRatio * sprintMultRatio;
+            case MovementType.Crouch:
+                return noiseRangeRatio * crouchMultRatio;
+            default: return noiseRangeRatio;
+        }
+    }
 }

@@ -9,6 +9,7 @@ public class Zombie : Character
 
     [Header("Detection")]
     [SerializeField] private float _visionDetectRange = 5f;
+    [SerializeField] private LayerMask visionObstacle;
 
     [Header("Idle")]
     [SerializeField] private float _roamingDistance = 2f;
@@ -52,7 +53,15 @@ public class Zombie : Character
     public bool IsInLineOfSight()
     {
         Vector3 dir = (player.transform.position - transform.position).normalized;
-        return Physics.Raycast(transform.position, dir, visionDetectRange);
+        if(Physics.Raycast(transform.position, dir, visionDetectRange))
+        {
+            if(Physics.Raycast(transform.position, dir, visionDetectRange, visionObstacle))
+            {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
     protected override void Start()
     {
@@ -75,8 +84,9 @@ public class Zombie : Character
         
         agent.speed = walkSpeed;
     }
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         if (currentState != null)
         {
             currentState.Loop();
@@ -102,11 +112,12 @@ public class Zombie : Character
         currentState.OnHeardNoise(lastNoisePos);
     }
 
-    public void ChangeMovement(bool isRunning)
-    {
-        isRunning = true;
-    }
 
+    public override void ChangeMovement(MovementType newMovement)
+    {
+        base.ChangeMovement(newMovement);
+        agent.speed = moveSpeed;
+    }
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.aquamarine;

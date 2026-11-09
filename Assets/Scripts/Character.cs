@@ -14,7 +14,8 @@ public class Character : MonoBehaviour
     [SerializeField] protected float _walkSpeed = 10f;
     [SerializeField] protected float _runSpeed = 15f;
     [SerializeField] protected float _crouchSpeed = 5f;
-
+    [SerializeField] protected float changeSpeedRatio = 5f;
+    protected float newSpeed;
     [SerializeField] protected MovementType movementState;
     public int maxHp
     {
@@ -82,6 +83,12 @@ public class Character : MonoBehaviour
         _currentHp = maxHp;
         isDead = false;
     }
+
+    protected virtual void Update()
+    {
+        moveSpeed = Mathf.Lerp(moveSpeed, newSpeed, Time.deltaTime * changeSpeedRatio);
+    }
+
     protected virtual void Dead()
     {
         if (isDead) return;
@@ -98,10 +105,19 @@ public class Character : MonoBehaviour
     {
         _currentHp += healAmount;
     }
-    public void ChangeMovement(MovementType newMovement)
+    public virtual void ChangeMovement(MovementType newMovement)
     {
-        if (newMovement == MovementType.Walk) moveSpeed = walkSpeed;
-        else if (newMovement == MovementType.Sprint) moveSpeed = runSpeed;
-        else if (newMovement == MovementType.Crouch) moveSpeed = crouchSpeed;
+        switch (newMovement)
+        {
+            case MovementType.Walk:
+                newSpeed = walkSpeed;
+                break;
+            case MovementType.Sprint:
+                newSpeed = runSpeed;
+                break;
+            case MovementType.Crouch:
+                newSpeed = crouchSpeed;
+                break;
+        }
     }
 }
