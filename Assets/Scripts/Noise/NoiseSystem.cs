@@ -38,7 +38,7 @@ public class NoiseSystem : MonoBehaviour
     public void NoiseOccur(NoiseSource source, Vector3 sourcePos, float noiseRange)
     {
         if (source == NoiseSource.Zombie) return;
-        Noise noise = ObjectPoolManager.Instance.Spawn(noisePrefab.gameObject, transform.position, Quaternion.identity).GetComponent<Noise>();
+        Noise noise = ObjectPoolManager.Instance.Spawn(noisePrefab.gameObject, sourcePos, Quaternion.identity).GetComponent<Noise>();
         noise.Initialize(noiseRange);
         Collider[] hits = Physics.OverlapSphere(sourcePos, noiseRange, zombieLayer);
         foreach (Collider hit in hits)
