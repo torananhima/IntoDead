@@ -1,15 +1,17 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MeleeWeaponData", menuName = "Scriptable Objects/ItemData/MeleeWeaponData")]
+[CreateAssetMenu(fileName = "MeleeWeaponData", menuName = "ItemData/MeleeWeaponData")]
 public class MeleeWeaponData : ItemData
 {
-    [SerializeField]private float damage;
-    [SerializeField]private float attackRange;
-    [SerializeField]private float attackCooldown;
-    [SerializeField]private float noiseRadius;
+    [Header("Attack")]
+    public int damage = 20;
+    public float attackRange = 1.5f;
+    public float hitboxRadius = 1f;
+    [Range(0f, 360f)]
+    public float attackAngle = 120f;
+    public float attackCooldown = 0.8f;
+    public LayerMask attackLayer;
 
-    public void CreatAttack()
-    {
-
-    }
+    [Header("Noise")]
+    public float noiseRadius = 5f;
 }

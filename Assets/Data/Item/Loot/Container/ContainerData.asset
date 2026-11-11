@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8561f3e240894c843adee5b5dd6ac7fd, type: 3}
+  m_Name: ContainerData
+  m_EditorClassIdentifier: Assembly-CSharp::ContainerData
+  lootEntries:
+  - {fileID: 11400000, guid: 1f6ad5a7ed927a844917c7901c8a822d, type: 2}
+  - {fileID: 11400000, guid: 534d56f7c3345c74aa0f0ea3da605dc0, type: 2}

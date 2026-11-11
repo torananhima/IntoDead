@@ -1,37 +1,86 @@
-using UnityEngine;
 
+using UnityEngine;
 
 public class RangedWeaponBehavior : IItemBehavior
 {
     public void Use(ItemUseContext context)
     {
-        RangedWeaponData rangedData = context.itemInstance.itemData as RangedWeaponData;
-        float damage = rangedData != null ? rangedData.damage : 0f;
-        if (context.itemInstance.currentAmmo <= 0)
+        if (!CanUse(context))
+            return;
+
+        RangedWeaponData weaponData =
+            context.itemInstance.itemData as RangedWeaponData;
+
+        ItemUseHandler handler = context.itemUseHandler;
+
+        Vector3 direction = handler.GetPlayerMouseToward();
+
+        if (direction.sqrMagnitude <= 0.001f)
+            return;
+
+        direction.Normalize();
+
+        Transform firePoint = handler.FirePoint;
+        Quaternion rotation = Quaternion.LookRotation(context.itemUseHandler.GetPlayerMouseToward());
+
+        GameObject bulletObject = ObjectPoolManager.Instance.Spawn(
+            weaponData.bulletPrefab,
+            firePoint.position,
+            rotation
+        );
+
+        if (bulletObject == null)
+            return;
+
+        Bullet bullet = bulletObject.GetComponent<Bullet>();
+
+        if (bullet == null)
         {
-            Debug.Log("No ammo left!");
+            Debug.LogError("Bullet prefab is missing Bullet component!");
+            ObjectPoolManager.Instance.Despawn(bulletObject);
             return;
         }
-        context.itemInstance.currentAmmo--;
-        Debug.Log($"Ranged item used! Damage: {damage}");
 
-        Bullet bullet = ObjectPoolManager.Instance.Spawn(rangedData.bulletPrefab, context.itemUseHandler.transform.position, context.itemUseHandler.transform.rotation).GetComponent<Bullet>();
-        Vector3 dir = context.itemUseHandler.GetPlayerMouseToward();
-        bullet.Initialize(rangedData.damage, dir);
+        bullet.Initialize(
+            Mathf.RoundToInt(weaponData.damage),
+            direction
+        );
+
+        context.itemInstance.ConsumeAmmo(1);
+
+        NoiseSystem.GetInstance().NoiseOccur(
+            NoiseSource.Player,
+            handler.transform.position,
+            weaponData.noiseRadius
+        );
+
+        handler.inventory.NotifyInventoryChanged();
+
+        // Start cooldown only after a successful shot.
+        handler.StartAttackCooldown(weaponData.fireCooldown);
     }
 
     public bool CanUse(ItemUseContext context)
     {
-        if (context.itemInstance.currentAmmo <= 0)
-        {
-            Debug.Log("Ammo is out");
+        if (context == null || context.itemInstance == null)
             return false;
-        }
-        return true;
+
+        if (context.itemUseHandler == null)
+            return false;
+
+        RangedWeaponData weaponData =
+            context.itemInstance.itemData as RangedWeaponData;
+
+        if (weaponData == null || weaponData.bulletPrefab == null)
+            return false;
+
+        if (ObjectPoolManager.Instance == null)
+            return false;
+
+        return context.itemInstance.HasAmmo;
     }
 
     public void AltUse(ItemUseContext context)
     {
-
     }
 }

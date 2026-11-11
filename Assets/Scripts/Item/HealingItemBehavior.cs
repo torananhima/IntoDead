@@ -9,12 +9,12 @@ public class HealingItemBehavior : IItemBehavior
         Debug.Log($"Healing item used! Healing: {healAmount}");
         context.itemUseHandler.GetComponent<Player>().Heal((int)healAmount);
         context.itemInstance.RemoveAmount(1);
-        if (context.itemInstance.IsEmpty()) context.itemUseHandler.inventory.TryRemoveItem(context.itemInstance);
+        if (context.itemInstance.IsEmpty) context.itemUseHandler.inventory.TryRemoveItem(context.itemInstance);
     }
 
     public bool CanUse(ItemUseContext context)
     {
-        if (context.itemInstance.IsEmpty()) return false;
+        if (context.itemInstance.IsEmpty) return false;
         return true;
     }
     public void AltUse(ItemUseContext context)

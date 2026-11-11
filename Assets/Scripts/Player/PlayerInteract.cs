@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Windows;
 
@@ -32,51 +33,65 @@ public class PlayerInteract : MonoBehaviour
 
     private void TryInteract()
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, pickupRange, interactLayer, QueryTriggerInteraction.Collide);
+        Collider[] colliders = Physics.OverlapSphere(
+            transform.position,
+            pickupRange,
+            interactLayer,
+            QueryTriggerInteraction.Collide
+        );
+
         InteractableObject closestObj = null;
+        float closestDistance = float.MaxValue;
 
-        float closest = float.MaxValue;
-        foreach (var collider in colliders)
+        HashSet<InteractableObject> checkedObjects = new();
+
+        foreach (Collider collider in colliders)
         {
-            if (!collider.TryGetComponent(out InteractableObject interactableObject))
+            if (!collider.TryGetComponent(out InteractableObject interactable))
             {
-                interactableObject = collider.GetComponentInParent<InteractableObject>();
+                interactable = collider.GetComponentInParent<InteractableObject>();
 
-                if (interactableObject == null)
+                if (interactable == null)
                     continue;
             }
-            float distance = Vector3.Distance(transform.position, collider.transform.position);
-            if (distance < closest)
+
+            if (!checkedObjects.Add(interactable))
+                continue;
+
+            float distance = Vector3.Distance(
+                transform.position,
+                collider.ClosestPoint(transform.position)
+            );
+
+            if (distance < closestDistance)
             {
-                closest = distance;
-                closestObj = interactableObject;
+                closestDistance = distance;
+                closestObj = interactable;
             }
         }
-        if (closestObj == null) OnNoInteractableInRange?.Invoke();
-        else if(closestObj != null) OnInteractableInRange?.Invoke(closestObj.transform, closestObj.actionName);
+
         closestInteractable = closestObj;
+
+        if (closestObj == null)
+        {
+            OnNoInteractableInRange?.Invoke();
+            return;
+        }
+
+        OnInteractableInRange?.Invoke(
+            closestObj.transform,
+            closestObj.actionName
+        );
     }
     private void Interact()
     {
         if (closestInteractable == null) return;
-        if(closestInteractable.TryGetComponent(out DroppedItem droppedItem))
-        {
-            if(droppedItem == null)
-            {
-                Debug.Log("No droppd item");
-                return;
-            }
-            TryPickUp(droppedItem);
-        }
-        Debug.Log($"Can interact: {closestInteractable?.CanInteract(gameObject) ?? false}");
-        droppedItem.PickupCompleted();
-        TryInteract();
-    }
 
-    private void TryPickUp(DroppedItem droppedItem)
-    {
-        Debug.Log($"Found dropped item: {droppedItem?.name ?? "null"}");
-        droppedItem.Interact(gameObject);
+        closestInteractable.Interact(gameObject);
+
+        Debug.Log($"Can interact: {closestInteractable?.CanInteract(gameObject) ?? false}");
+        //droppedItem.PickupCompleted();
+        TryInteract();
     }
     private void OnDrawGizmosSelected()
     {

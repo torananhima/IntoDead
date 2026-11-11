@@ -31,7 +31,7 @@ public class PlayerInputSystem : MonoBehaviour
 
     private PlayerInput playerInput;
     private bool controlsDisabled;
-
+    private bool lastUsePressed;
     private readonly Dictionary<string, bool> buttonStates =
         new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase)
         {
@@ -148,7 +148,9 @@ public class PlayerInputSystem : MonoBehaviour
 
             case "use":
                 Debug.Log("UseInput invoke");
-                InputOnUse?.Invoke();
+                if(lastUsePressed == false && pressed){
+                    InputOnUse?.Invoke();
+                }
                 break;
 
             case "interact":

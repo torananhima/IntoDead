@@ -24,6 +24,7 @@ public class Player : Character
     public PlayerInventory _inventory { get; private set; }
     public PlayerInteract _interact { get; private set; }
     public PlayerMovement _movement { get; private set; }
+    public ItemUseHandler _itemHandler { get; private set; }
 
     private void Awake()
     {
@@ -32,6 +33,7 @@ public class Player : Character
         _inventory = GetComponent<PlayerInventory>();
         _interact = GetComponent<PlayerInteract>();
         _movement = GetComponent<PlayerMovement>();
+        _itemHandler = GetComponent<ItemUseHandler>();
         ChangeMovement(MovementType.Walk);
 
         StartCoroutine(HandleMovement());
@@ -56,6 +58,7 @@ public class Player : Character
     IEnumerator HandleMovement()
     {
         if (!_movement) yield return null;
+        if (CanMove()) yield return null;
         float timer = 0;
         while (true)
         {
@@ -91,5 +94,14 @@ public class Player : Character
                 return noiseRangeRatio * crouchMultRatio;
             default: return noiseRangeRatio;
         }
+    }
+
+    private bool CanMove()
+    {
+        if (_itemHandler.isOnAttackCooldown)
+        {
+            return false;
+        }
+        return true;
     }
 }

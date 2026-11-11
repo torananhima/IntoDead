@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 344f8e6ce2f90a34da696669da05da10, type: 3}
+  m_Name: Firearm
+  m_EditorClassIdentifier: Assembly-CSharp::LootEntry
+  items:
+  - item: {fileID: 11400000, guid: c7d13225da8dfa147858b64c1f29aef0, type: 2}
+    weight: 0.4
+    minAmount: 1
+    maxAmount: 1
+    minMagazineAmmo: 4
+    maxMagazineAmmo: 8
+  - item: {fileID: 11400000, guid: d52b9d7e001eab6458b21bb5226ee5cc, type: 2}
+    weight: 0.3
+    minAmount: 1
+    maxAmount: 1
+    minMagazineAmmo: 12
+    maxMagazineAmmo: 20
+  - item: {fileID: 11400000, guid: aafd9d4666c0c93489bf06972a6d08db, type: 2}
+    weight: 0.3
+    minAmount: 1
+    maxAmount: 1
+    minMagazineAmmo: 8
+    maxMagazineAmmo: 16

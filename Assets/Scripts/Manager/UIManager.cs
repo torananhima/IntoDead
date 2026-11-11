@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -80,11 +79,12 @@ public class UIManager : MonoBehaviour
     }
     public void ChangeInventorySlot()
     {
-        List<ItemInstance> items = playerInventory.items;
+        List<ItemInstance> items = new(playerInventory.Items);
         for (int i = 0; i < inventorySlots_image.Length; i++)
         {
             if (i < items.Count)
             {
+                if (items[i] == null || items[i].itemData == null) continue;
                 inventorySlots_image[i].gameObject.SetActive(true);
                 inventorySlots_image[i].sprite = items[i].itemData.icon;
             }
@@ -107,7 +107,7 @@ public class UIManager : MonoBehaviour
     {
 
         RectTransform indicator = slotIndicator.GetComponent<RectTransform>();
-        RectTransform slot = inventorySlots_image[playerInventory.selectedSlot].GetComponent<RectTransform>();
+        RectTransform slot = inventorySlots_image[playerInventory.SelectedSlot].GetComponent<RectTransform>();
 
         indicator.position = slot.position;
     }
@@ -120,7 +120,6 @@ public class UIManager : MonoBehaviour
     public void ShowInteractIndicator(Transform interactObject, string actionName)
     {
         if(!interactIndicator.activeSelf) interactIndicator.SetActive(true);
-
         Vector2 screenPos = mainCam.WorldToScreenPoint(interactObject.position);
         int xFlip = IsRightHalfScreen(screenPos) ? 1 : -1;
         int yFlip = IsAboveHalfScreen(screenPos) ? 1 : -1;

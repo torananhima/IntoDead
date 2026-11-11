@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum MovementType
@@ -27,22 +28,13 @@ public class Character : MonoBehaviour
     }
     public int hp
     {
-        get
-        {
-            return _currentHp;
-        }
+        get => _currentHp;
         protected set
         {
-            if (value > maxHp)
-            {
-                value = maxHp;
-            }
-            else if (value <= 0)
-            {
-                value = 0;
+            _currentHp = Mathf.Clamp(value, 0, maxHp);
+
+            if (_currentHp <= 0)
                 Dead();
-            }
-            _currentHp = value;
         }
     }
     public float walkSpeed
@@ -98,12 +90,19 @@ public class Character : MonoBehaviour
 
     public virtual void TakeDamage(int damageTaken)
     {
-        _currentHp -= damageTaken;
+        Debug.Log(gameObject.name + " takes " + damageTaken + " damages");
+        if (isDead || damageTaken <= 0)
+            return;
+
+        hp -= damageTaken;
     }
 
     public virtual void Heal(int healAmount)
     {
-        _currentHp += healAmount;
+        if (isDead || healAmount <= 0)
+            return;
+
+        hp += healAmount;
     }
     public virtual void ChangeMovement(MovementType newMovement)
     {

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 567b5d1a3937f7c4ca16454131992bf2, type: 3}
+  m_Name: Fireaxe
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeWeaponData
+  itemId: 100
+  displayName: Fireaxe
+  icon: {fileID: -1683045150, guid: ea53214bde0a7584c9469688d25d29b3, type: 3}
+  worldPrefab: {fileID: 100000, guid: b92e432993e63b740a483cc7a150f000, type: 3}
+  itemType: 0
+  isStackable: 0
+  maxStackSize: 0
+  damage: 25
+  attackRange: 2.5
+  hitboxRadius: 6
+  attackAngle: 120
+  attackCooldown: 1
+  attackLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  noiseRadius: 6

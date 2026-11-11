@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "HealingItemData", menuName = "Scriptable Objects/ItemData/HealingItemData")]
+[CreateAssetMenu(fileName = "HealingItemData", menuName = "ItemData/HealingItemData")]
 public class HealingItemData : ItemData
 {
     [SerializeField] private float healingAmount;

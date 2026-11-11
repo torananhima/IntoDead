@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5101d17e8be3f594fa96a39d58801c3a, type: 3}
+  m_Name: M4A1
+  m_EditorClassIdentifier: Assembly-CSharp::RangedWeaponData
+  itemId: 202
+  displayName: M4A1
+  icon: {fileID: 1821818961, guid: 92a4fe653152e9244b4849b9dba1c92b, type: 3}
+  worldPrefab: {fileID: 1117582899397640, guid: 689946d975a0e55449b1e7ae41933e73, type: 3}
+  itemType: 1
+  isStackable: 0
+  maxStackSize: 0
+  ammoType: 1
+  damage: 15
+  magazineSize: 25
+  fireCooldown: 0.2
+  reloadDuration: 1.5
+  noiseRadius: 6
+  bulletPrefab: {fileID: 4126858333813287010, guid: 951b122fe1804044da3997289bede43f, type: 3}

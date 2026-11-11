@@ -1,116 +1,40 @@
-using NUnit.Framework.Interfaces;
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
-using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 public class PlayerInventory : MonoBehaviour
 {
+    [Header("Inventory")]
+    [SerializeField] private int maxSlots = 10;
+    [SerializeField] private int selectedSlot = 0;
+
+    [SerializeField] private List<ItemInstance> items = new();
+
+    [Header("World Drop")]
+    [SerializeField] private GameObject droppedItemPrefab;
+    [SerializeField] private Transform dropPoint;
+
+    [Header("Reserve Ammunition")]
     public int pistolAmmo;
     public int rifleAmmo;
-    public int shotgunAmmo;
     public int sniperAmmo;
-    [SerializeField] private int maxSlots = 10;
-    public int selectedSlot = 0;
 
-    public readonly List<ItemInstance> items = new List<ItemInstance>();
+    private PlayerInputSystem input;
 
     public event Action OnInventoryChanged;
-    Player player;
 
-    public ItemInstance CurrentItem => items[selectedSlot];
+    public int MaxSlots => maxSlots;
+    public int SelectedSlot => selectedSlot;
 
-    private void Start()
-    {
-        player = GetComponent<Player>();
-        player._input.InputOnChangeSlot += SelectSlot;
-        player._input.InputOnReload += RelaodWeapon;
-    }
-
-    private void OnDisable()
-    {
-        player._input.InputOnChangeSlot -= SelectSlot;
-        player._input.InputOnReload -= RelaodWeapon;
-    }
-    public bool TryAddItem(ItemInstance item)
-    {
-        if (item == null || !HasSpaceForItem(item))
-        {
-            return false;
-        }
-
-        AddItem(item);
-        return true;
-    }
-
-    public void AddItem(ItemInstance item)
-    {
-
-        items.Add(item);
-
-        if (selectedSlot >= maxSlots)
-        {
-            selectedSlot = maxSlots - 1;
-        }
-
-        OnInventoryChanged?.Invoke();
-        return;
-    }
-
-    public bool TryRemoveItem(ItemInstance item)
-    {
-        if (item == null || !items.Remove(item))
-        {
-            return false;
-        }
-
-        ClampSelectedSlot();
-        OnInventoryChanged?.Invoke();
-        return true;
-    }
+    public IReadOnlyList<ItemInstance> Items => items;
 
     public ItemInstance GetItem(int slot)
     {
-        if (slot < 0 || slot >= items.Count)
-        {
+        if (!IsValidSlot(slot))
             return null;
-        }
 
         return items[slot];
-    }
-
-    public void DropItem(int slot, int amount)
-    {
-        if (slot < 0 || slot >= items.Count || amount <= 0)
-        {
-            return;
-        }
-
-        ItemInstance item = items[slot];
-
-        if (item == null)
-        {
-            items.RemoveAt(slot);
-            ClampSelectedSlot();
-            OnInventoryChanged?.Invoke();
-            return;
-        }
-
-        item.RemoveAmount(amount);
-
-        if (item.IsEmpty())
-        {
-            items.RemoveAt(slot);
-            ClampSelectedSlot();
-        }
-
-        OnInventoryChanged?.Invoke();
-    }
-
-    public bool HasSpaceForItem(ItemInstance item)
-    {
-        return item != null && items.Count < maxSlots;
     }
 
     public ItemInstance GetSelectedItem()
@@ -118,106 +42,302 @@ public class PlayerInventory : MonoBehaviour
         return GetItem(selectedSlot);
     }
 
-    private void SelectSlot(int slot)
+    private void Awake()
+    {
+        maxSlots = Mathf.Max(1, maxSlots);
+
+        // Create exactly maxSlots empty slots.
+        items = new List<ItemInstance>(maxSlots);
+
+        for (int i = 0; i < maxSlots; i++)
+        {
+            items.Add(null);
+        }
+
+        input = GetComponent<PlayerInputSystem>();
+    }
+
+    private void OnEnable()
+    {
+        if (input == null)
+            return;
+
+        input.InputOnChangeSlot += HandleChangeSlot;
+        input.InputOnDrop += HandleDrop;
+    }
+
+    private void OnDisable()
+    {
+        if (input == null)
+            return;
+
+        input.InputOnChangeSlot -= HandleChangeSlot;
+        input.InputOnDrop -= HandleDrop;
+    }
+
+    private void HandleChangeSlot(int slot)
     {
         TrySelectSlot(slot);
     }
-    public bool TrySelectSlot(int slot)
-    {
-        selectedSlot = slot;
-        OnInventoryChanged?.Invoke();
 
-        if (slot < 0 || slot >= items.Count)
-        {
+    private void HandleDrop()
+    {
+        DropSelectedItem();
+    }
+
+    // --------------------------------------------------
+    // ADD ITEMS
+    // --------------------------------------------------
+
+    public bool TryAddItem(ItemInstance incoming)
+    {
+        if (incoming == null || incoming.IsEmpty)
             return false;
+
+        // 1. Fill existing compatible stacks.
+        if (incoming.itemData.IsStackable)
+        {
+            for (int i = 0; i < items.Count; i++)
+            {
+                ItemInstance existing = items[i];
+
+                if (existing == null)
+                    continue;
+
+                if (!existing.CanStackWith(incoming))
+                    continue;
+
+                incoming.TransferTo(existing, incoming.Amount);
+
+                if (incoming.IsEmpty)
+                {
+                    NotifyInventoryChanged();
+                    return true;
+                }
+            }
         }
 
+        // 2. Find an empty slot.
+        int emptySlot = FindEmptySlot();
+
+        if (emptySlot >= 0)
+        {
+            // Transfer ownership to inventory.
+            items[emptySlot] = incoming;
+
+            NotifyInventoryChanged();
+            return true;
+        }
+
+        // 3. No empty slot. The incoming instance
+        // retains any amount that wasn't transferred.
+        NotifyInventoryChanged();
+        return false;
+    }
+
+    private int FindEmptySlot()
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i] == null || items[i].itemData == null)
+                return i;
+        }
+
+        return -1;
+    }
+
+    // --------------------------------------------------
+    // REMOVE ITEMS
+    // --------------------------------------------------
+
+    public bool TryRemoveItem(int slot)
+    {
+        if (!IsValidSlot(slot))
+            return false;
+
+        if (items[slot] == null)
+            return false;
+
+        items[slot] = null;
+
+        NotifyInventoryChanged();
         return true;
     }
 
-    private void ClampSelectedSlot()
+    public bool TryRemoveItem(ItemInstance item)
     {
-        if (items.Count == 0)
+        if (item == null)
+            return false;
+
+        for (int i = 0; i < items.Count; i++)
         {
-            selectedSlot = 0;
+            if (items[i] == item)
+                return TryRemoveItem(i);
         }
-        else
-        {
-            selectedSlot = Mathf.Clamp(selectedSlot, 0, items.Count - 1);
-        }
+
+        return false;
     }
 
-    private void RelaodWeapon()
+    // --------------------------------------------------
+    // DROP ITEMS
+    // --------------------------------------------------
+
+    public bool DropSelectedItem()
     {
-        if (items[selectedSlot].itemData is RangedWeaponData weapon)
-        {
-            RemoveAmmo(weapon.ammoType, CurrentItem.Reload(GetAmmo(weapon.ammoType)));
-        }
+        return DropItem(selectedSlot);
     }
+
+    public bool DropItem(int slot)
+    {
+        if (!IsValidSlot(slot))
+            return false;
+
+        ItemInstance item = items[slot];
+
+        if (item == null || droppedItemPrefab == null)
+            return false;
+
+        if (ObjectPoolManager.Instance == null)
+        {
+            Debug.LogError("ObjectPoolManager is missing.");
+            return false;
+        }
+
+        Vector3 position = dropPoint != null
+            ? dropPoint.position
+            : transform.position;
+
+        GameObject droppedObject = ObjectPoolManager.Instance.Spawn(
+            droppedItemPrefab,
+            position,
+            Quaternion.identity
+        );
+
+        if (droppedObject == null)
+            return false;
+
+        DroppedItem droppedItem = droppedObject.GetComponent<DroppedItem>();
+
+        if (droppedItem == null)
+        {
+            Debug.LogError("DroppedItem component is missing.", droppedObject);
+
+            ObjectPoolManager.Instance.Despawn(droppedObject);
+            return false;
+        }
+
+        // Initialize before transferring ownership.
+        if (!droppedItem.Initialize(item))
+        {
+            ObjectPoolManager.Instance.Despawn(droppedObject);
+            return false;
+        }
+
+        // Transfer ownership.
+        items[slot] = null;
+
+        NotifyInventoryChanged();
+        return true;
+    }
+
+    // --------------------------------------------------
+    // SLOT SELECTION
+    // --------------------------------------------------
+
+    public bool TrySelectSlot(int slot)
+    {
+        if (!IsValidSlot(slot))
+            return false;
+
+        if (selectedSlot == slot)
+            return true;
+
+        selectedSlot = slot;
+
+        NotifyInventoryChanged();
+        return true;
+    }
+
+    private bool IsValidSlot(int slot)
+    {
+        return slot >= 0 && slot < items.Count;
+    }
+
+    // --------------------------------------------------
+    // RESERVE AMMUNITION
+    // --------------------------------------------------
 
     public int GetAmmo(AmmoType ammoType)
     {
-        switch (ammoType)
+        return ammoType switch
         {
-            case AmmoType.Pistol:
-                return pistolAmmo;
-            case AmmoType.Rifle:
-                return rifleAmmo;
-            case AmmoType.Shotgun:
-                return shotgunAmmo;
-            case AmmoType.Sniper:
-                return sniperAmmo;
-            default:
-                return 0;
-        }
+            AmmoType.Pistol => pistolAmmo,
+            AmmoType.Rifle => rifleAmmo,
+            AmmoType.Sniper => sniperAmmo,
+            _ => 0
+        };
     }
+
     public void AddAmmo(AmmoType ammoType, int amount)
     {
+        if (amount <= 0)
+            return;
+
         switch (ammoType)
         {
             case AmmoType.Pistol:
                 pistolAmmo += amount;
                 break;
+
             case AmmoType.Rifle:
                 rifleAmmo += amount;
                 break;
-            case AmmoType.Shotgun:
-                shotgunAmmo += amount;
-                break;
+
             case AmmoType.Sniper:
                 sniperAmmo += amount;
                 break;
+
             default:
-                break;
+                return;
         }
+
+        NotifyInventoryChanged();
     }
-    public void RemoveAmmo(AmmoType ammoType, int amount)
+
+
+    public bool RemoveAmmo(AmmoType ammoType, int amount)
     {
+        if (amount <= 0 || GetAmmo(ammoType) < amount)
+            return false;
+
         switch (ammoType)
         {
             case AmmoType.Pistol:
                 pistolAmmo -= amount;
                 break;
+
             case AmmoType.Rifle:
                 rifleAmmo -= amount;
                 break;
-            case AmmoType.Shotgun:
-                shotgunAmmo -= amount;
-                break;
+
             case AmmoType.Sniper:
                 sniperAmmo -= amount;
                 break;
+
             default:
-                break;
+                return false;
         }
+
+        NotifyInventoryChanged();
+        return true;
     }
 
-    [ContextMenu("Check Inventory")]
-    public void DebugItemsInInventory()
+    // --------------------------------------------------
+    // EVENTS
+    // --------------------------------------------------
+
+    public void NotifyInventoryChanged()
     {
-        foreach(ItemInstance item in items)
-        {
-            Debug.Log($"{item.itemData.name} | {item.Amount}, Ammo: {item.currentAmmo}");
-        }
+        OnInventoryChanged?.Invoke();
     }
 }

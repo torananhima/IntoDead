@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 344f8e6ce2f90a34da696669da05da10, type: 3}
+  m_Name: Throwing
+  m_EditorClassIdentifier: Assembly-CSharp::LootEntry
+  items:
+  - item: {fileID: 11400000, guid: 7495cb6dc22e9fd43a5174ad960c3f21, type: 2}
+    weight: 1
+    minAmount: 1
+    maxAmount: 3
+    minMagazineAmmo: 0
+    maxMagazineAmmo: 0

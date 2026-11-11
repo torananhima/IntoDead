@@ -1,7 +1,5 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ItemData", menuName = "Scriptable Objects/ItemData")]
-
 public abstract class ItemData : ScriptableObject
 {
     public enum ItemType
@@ -11,12 +9,18 @@ public abstract class ItemData : ScriptableObject
     }
     [SerializeField]private string itemId;
     [SerializeField]private string displayName;
-    [SerializeField]private string description;
     public Sprite icon;
     public GameObject worldPrefab;
     [SerializeField]private ItemType itemType;
     [SerializeField]private bool isStackable;
-    private int maxStackSize;
+    public int maxStackSize;
+
+    public string ItemId => itemId;
+    public string DisplayName => displayName;
+    public bool IsStackable => isStackable;
+    public int MaxStackSize => isStackable
+        ? Mathf.Max(1, maxStackSize)
+        : 1;
 
     public bool CanStackWith(ItemData other)
     {

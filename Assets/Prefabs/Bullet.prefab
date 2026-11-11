@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2304747235950953793}
   - component: {fileID: 8988079774540680174}
   - component: {fileID: 6991491424021415044}
+  - component: {fileID: -8037247731446640523}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -127,4 +128,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cc144ece5ebef542b444800b9e580d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bullet
-  speed: 10
+  speed: 30
+  lifetime: 5
+--- !u!54 &-8037247731446640523
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4126858333813287010}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

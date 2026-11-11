@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2adcdfc4c4af19547a23a8f017c5a7d2, type: 3}
   m_Name: Medkit
   m_EditorClassIdentifier: Assembly-CSharp::HealingItemData
-  itemId: 0
+  itemId: 001
   displayName: Medkit
-  description: heealing item
   icon: {fileID: 21300000, guid: 8d64f183e79b2534b8087fb025157003, type: 3}
-  worldPrefab: {fileID: 0}
+  worldPrefab: {fileID: 1987713744733760, guid: b35e7d06300ae7a4197808f189ba3069, type: 3}
   itemType: 2
-  isStackable: 0
+  isStackable: 1
+  maxStackSize: 2
   healingAmount: 50
   usedDuration: 1
