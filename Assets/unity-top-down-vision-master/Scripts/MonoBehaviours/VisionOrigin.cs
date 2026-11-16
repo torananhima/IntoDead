@@ -541,9 +541,8 @@ namespace GrozaGames.TopDownVision.MonoBehaviours
             bool inAmbientRange = distance <= _circleMaxDistance;
 
             Vector3 forward = transform.forward;
-
-
-            forward.y = _originHeightOffset;
+            forward.y = 0f;
+            forward.Normalize();
 
             bool inFlashlight =
                 distance <= _coneMaxDistance &&

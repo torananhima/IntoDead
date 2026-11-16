@@ -160,6 +160,7 @@ public class PlayerInventory : MonoBehaviour
 
         items[slot] = null;
 
+        Debug.Log("Inventory Change on remove");
         NotifyInventoryChanged();
         return true;
     }

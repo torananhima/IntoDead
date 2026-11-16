@@ -58,6 +58,7 @@ public class RangedWeaponBehavior : IItemBehavior
 
         // Start cooldown only after a successful shot.
         handler.StartAttackCooldown(weaponData.fireCooldown);
+        handler.OnWeaponAmmoChange?.Invoke(context.itemInstance.CurrentAmmo, context.itemInstance.MaxMagazine);
     }
 
     public bool CanUse(ItemUseContext context)

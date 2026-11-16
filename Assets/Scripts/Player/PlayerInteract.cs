@@ -7,7 +7,8 @@ public class PlayerInteract : MonoBehaviour
 {
     [Header("Interact")]
     [SerializeField] LayerMask interactLayer;
-    [SerializeField] float pickupRange = 3f;
+    [SerializeField] LayerMask obstacleLayer;
+    [SerializeField] float interactRange = 3f;
 
     InteractableObject closestInteractable;
     Player player;
@@ -35,7 +36,7 @@ public class PlayerInteract : MonoBehaviour
     {
         Collider[] colliders = Physics.OverlapSphere(
             transform.position,
-            pickupRange,
+            interactRange,
             interactLayer,
             QueryTriggerInteraction.Collide
         );
@@ -53,6 +54,15 @@ public class PlayerInteract : MonoBehaviour
 
                 if (interactable == null)
                     continue;
+                Vector3 dir = (interactable.transform.position - transform.position).normalized;
+                if(Physics.Raycast(transform.position, dir, interactRange, obstacleLayer))
+                {
+                    continue;
+                }
+                if(interactable.TryGetComponent(out WorldContainer container))
+                {
+                    if (container.IsOpened) continue;
+                }
             }
 
             if (!checkedObjects.Add(interactable))
@@ -96,6 +106,6 @@ public class PlayerInteract : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, pickupRange);
+        Gizmos.DrawWireSphere(transform.position, interactRange);
     }
 }

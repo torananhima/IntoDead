@@ -9,15 +9,20 @@ public class UIManager : MonoBehaviour
     [Header("Player")]
     [Header("Status")]
     [SerializeField] Image hpBar_image;
+    [SerializeField] Image hpBarFollow_image;
+    [SerializeField] float barLerpSpeed = 3f;
     [SerializeField] Image staminaBar_image;
     [Header("Inventory")]
     [SerializeField] Image[] inventorySlots_image;
     [SerializeField] Image slotIndicator;
 
+    [SerializeField] TMP_Text pistolAmmo_text;
+    [SerializeField] TMP_Text rifleAmmo_text;
+    [SerializeField] TMP_Text sniperAmmo_text;
+    [SerializeField] WeaponAmmoUI weaponAmmoUI;
+
     [Header("Indicator")]
-    [SerializeField] Vector2 interactIndicatorOffset;
-    [SerializeField] GameObject interactIndicator;
-    [SerializeField] TMP_Text interactAction_text;
+    [SerializeField] InteractIndicator interactIndicator;
 
     private float halfWidthScreen;
     private float halfHeightScreen;
@@ -26,11 +31,15 @@ public class UIManager : MonoBehaviour
     PlayerInventory playerInventory;
     Camera mainCam;
 
-    private bool IsAboveHalfScreen(Vector2 screenPos)
+    Coroutine HpBarLerp;
+
+    Color hasItemColor = new Color(1,1,1,1);
+    Color noItemColor = new Color(1,1,1, 0);
+    public bool IsAboveHalfScreen(Vector2 screenPos)
     {
         return screenPos.y >= halfHeightScreen;
     }
-    private bool IsRightHalfScreen(Vector2 screenPos)
+    public bool IsRightHalfScreen(Vector2 screenPos)
     {
         return screenPos.x >= halfWidthScreen;
     }
@@ -55,6 +64,7 @@ public class UIManager : MonoBehaviour
 
         player._interact.OnInteractableInRange += ShowInteractIndicator;
         player._interact.OnNoInteractableInRange += HideInteractIndicator;
+        player._itemHandler.OnWeaponAmmoChange += UpdateWeaponAmmo;
 
         halfWidthScreen = Screen.width / 2;
         halfHeightScreen = Screen.height / 2;
@@ -76,6 +86,7 @@ public class UIManager : MonoBehaviour
         playerInventory.OnInventoryChanged -= ChangeInventorySlot;
         player._interact.OnInteractableInRange -= ShowInteractIndicator;
         player._interact.OnNoInteractableInRange -= HideInteractIndicator;
+        player._itemHandler.OnWeaponAmmoChange -= UpdateWeaponAmmo;
     }
     public void ChangeInventorySlot()
     {
@@ -84,13 +95,21 @@ public class UIManager : MonoBehaviour
         {
             if (i < items.Count)
             {
-                if (items[i] == null || items[i].itemData == null) continue;
-                inventorySlots_image[i].gameObject.SetActive(true);
+                if (items[i] == null || items[i].itemData == null)
+                {
+                    //inventorySlots_image[i].gameObject.SetActive(false);
+                    //inventorySlots_image[i].sprite = null;
+                    inventorySlots_image[i].color = noItemColor;
+                    continue;
+                }
+                //inventorySlots_image[i].gameObject.SetActive(true);
+                inventorySlots_image[i].color = hasItemColor;
                 inventorySlots_image[i].sprite = items[i].itemData.icon;
             }
             else
             {
                 //inventorySlots_image[i].gameObject.SetActive(false);
+                inventorySlots_image[i].color = noItemColor;
                 inventorySlots_image[i].sprite = null;
             }
             if (i >= inventorySlots_image.Length)
@@ -101,38 +120,88 @@ public class UIManager : MonoBehaviour
 
         }
         ChangeSelectingSlot();
+        UpdateAmmo(new AmmoContext(playerInventory.pistolAmmo, playerInventory.rifleAmmo, playerInventory.sniperAmmo));
     }
 
+    public void UpdateAmmo(AmmoContext ammoContext)
+    {
+        pistolAmmo_text.text = $"P {ammoContext.pistolAmmo}";
+        rifleAmmo_text.text = $"R {ammoContext.rifleAmmo}";
+        sniperAmmo_text.text = $"S {ammoContext.sniperAmmo}";
+    }
     public void ChangeSelectingSlot()
     {
+        slotIndicator.transform.SetParent(inventorySlots_image[playerInventory.SelectedSlot].transform);
+        slotIndicator.GetComponent<RectTransform>().anchoredPosition = Vector3.zero;
 
-        RectTransform indicator = slotIndicator.GetComponent<RectTransform>();
-        RectTransform slot = inventorySlots_image[playerInventory.SelectedSlot].GetComponent<RectTransform>();
+        ItemInstance holdItem = playerInventory.GetSelectedItem();
+        if (holdItem != null)
+        {
+            if (holdItem.itemData is RangedWeaponData gun)
+            {
+                ShowWeaponAmmo();
+                UpdateWeaponAmmo(holdItem.CurrentAmmo, holdItem.MaxMagazine);
+            }
+            else
+            {
+                HideeWeaponAmmo();
+            }
+        }
+        //RectTransform indicator = slotIndicator.GetComponent<RectTransform>();
+        //RectTransform slot = inventorySlots_image[playerInventory.SelectedSlot].GetComponent<RectTransform>();
 
-        indicator.position = slot.position;
+        //indicator.position = slot.position;
     }
 
-    public void UpdateHpBar(int currentHp, int maxHp)
+    public void UpdateHpBar(float currentHp, float maxHp)
     {
-        hpBar_image.fillAmount = (float)currentHp / (float)maxHp;
+        hpBar_image.fillAmount = currentHp / maxHp;
+        if(HpBarLerp != null)
+        {
+            StopCoroutine(HpBarLerp);
+            HpBarLerp = null;
+        }
+
+        HpBarLerp = StartCoroutine(FollowHpBar(currentHp, maxHp));
     }
 
+    IEnumerator FollowHpBar(float currentHp, float maxHp)
+    {
+        float fillAmount = currentHp / maxHp;
+        while (hpBarFollow_image.fillAmount != fillAmount)
+        {
+            hpBarFollow_image.fillAmount = Mathf.Lerp(hpBarFollow_image.fillAmount, fillAmount, Time.deltaTime * barLerpSpeed);
+            yield return null;
+        }
+        StopCoroutine(HpBarLerp);
+        HpBarLerp = null;
+    }
+    public void UpdateStaminaBar(float currentStamina, float maxStamina)
+    {
+        staminaBar_image.fillAmount = currentStamina / maxStamina;
+    }
+
+    public void ShowWeaponAmmo()
+    {
+        weaponAmmoUI.gameObject.SetActive(true);
+    }
+    public void UpdateWeaponAmmo(int currentAmmo, int maxMagazine)
+    {
+        weaponAmmoUI.UpdateAmmoUI(currentAmmo, maxMagazine);
+    }
+    public void HideeWeaponAmmo()
+    {
+        weaponAmmoUI.gameObject.SetActive(false);
+    }
     public void ShowInteractIndicator(Transform interactObject, string actionName)
     {
-        if(!interactIndicator.activeSelf) interactIndicator.SetActive(true);
         Vector2 screenPos = mainCam.WorldToScreenPoint(interactObject.position);
-        int xFlip = IsRightHalfScreen(screenPos) ? 1 : -1;
-        int yFlip = IsAboveHalfScreen(screenPos) ? 1 : -1;
-        screenPos.x += interactIndicatorOffset.x * xFlip;
-        screenPos.y += interactIndicatorOffset.y * yFlip;
-        interactIndicator.transform.position = screenPos;
-
-        interactAction_text.text = actionName;
+        interactIndicator.Show();
+        interactIndicator.UpdateIndicator(screenPos, actionName);
     }
 
     public void HideInteractIndicator()
     {
-        interactIndicator.SetActive(false);
+        interactIndicator.Hide();
     }
-
 }

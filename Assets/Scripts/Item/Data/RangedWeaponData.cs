@@ -7,6 +7,21 @@ public enum AmmoType
     Rifle,
     Sniper
 }
+
+public struct AmmoContext
+{
+    public int pistolAmmo;
+    public int rifleAmmo;
+    public int sniperAmmo;
+
+    public AmmoContext(int pistolAmmo, int rifleAmmo, int sniperAmmo)
+    {
+        this.pistolAmmo = pistolAmmo;
+        this.rifleAmmo = rifleAmmo;
+        this.sniperAmmo = sniperAmmo;
+    }
+}
+
 [CreateAssetMenu(fileName = "RangedWeaponData", menuName = "ItemData/RangedWeaponData")]
 public class RangedWeaponData : ItemData
 {

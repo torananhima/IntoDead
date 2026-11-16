@@ -1,12 +1,21 @@
 using GrozaGames.TopDownVision.MonoBehaviours;
+using System;
 using System.Collections;
 using UnityEngine;
 
 
 public class Player : Character
 {
-    private float maxStamina = 100;
+    [Header("Stamina")]
+    [SerializeField] private float maxStamina = 100;
+
     private float currentStamina = 100;
+    [Tooltip("Stamina recovery delay (second)")]
+    [SerializeField] private float recoveryDelay = 0.5f;
+    [Tooltip("Stamina recovery per second")]
+    [SerializeField] private float staminaRecoveryRate = 20;
+    [Tooltip("Stamina drained when running per second")]
+    [SerializeField] private float sprintDrainRate = 33;
     public float _currentStamina
     {
         get { return  _currentStamina; }
@@ -37,6 +46,8 @@ public class Player : Character
         ChangeMovement(MovementType.Walk);
 
         StartCoroutine(HandleMovement());
+
+        StartCoroutine(HandleStamina());
     }
     protected override void Update()
     {
@@ -82,6 +93,43 @@ public class Player : Character
         }
     }
 
+    private IEnumerator HandleStamina()
+    {
+        float recoveryTimer = 0;
+        while (true)
+        {
+            if(movementState == MovementType.Sprint)
+            {
+                currentStamina -= Time.deltaTime * sprintDrainRate;
+                recoveryTimer = recoveryDelay;
+
+                if(currentStamina <= 0)
+                {
+                    ChangeMovement(MovementType.Walk);
+                    currentStamina = 0;
+                }
+                UIManager.instance.UpdateStaminaBar(currentStamina, maxStamina);
+            }
+            if(recoveryTimer > 0)
+            {
+                recoveryTimer -= Time.deltaTime;
+            }
+            else
+            {
+                if (currentStamina < maxStamina)
+                {
+                    currentStamina += Time.deltaTime * staminaRecoveryRate;
+                }
+                else
+                {
+                    currentStamina = maxStamina;
+                }
+                UIManager.instance.UpdateStaminaBar(currentStamina, maxStamina);
+            }
+            yield return null;
+        }
+    }
+
     private float GetNoiseRnage(MovementType movementType)
     {
         switch (movementType)
@@ -103,5 +151,23 @@ public class Player : Character
             return false;
         }
         return true;
+    }
+    public override void ChangeMovement(MovementType newMovement)
+    {
+        switch (newMovement)
+        {
+            case MovementType.Walk:
+                newSpeed = walkSpeed;
+                movementState = MovementType.Walk;
+                break;
+            case MovementType.Sprint:
+                newSpeed = runSpeed;
+                movementState = MovementType.Sprint;
+                break;
+            case MovementType.Crouch:
+                newSpeed = crouchSpeed;
+                movementState = MovementType.Crouch;
+                break;
+        }
     }
 }

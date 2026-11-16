@@ -103,4 +103,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1e827651b1daa843a904d2439e48d74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Noise
+  isDrawGizmo: 1
   spreadSpeed: 5
+  startScale: 0.1

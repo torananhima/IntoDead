@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -25,6 +26,7 @@ public class ItemUseHandler : MonoBehaviour
     private Coroutine cooldownRoutine;
     private Coroutine reloadRoutine;
     private bool hasStarted;
+    public Action<int, int> OnWeaponAmmoChange;
     public Transform FirePoint => firePoint != null
         ? firePoint
         : transform;
@@ -168,6 +170,7 @@ public class ItemUseHandler : MonoBehaviour
             Debug.Log($"Reloaded {loadedAmmo} rounds.");
         }
 
+        OnWeaponAmmoChange?.Invoke(weapon.CurrentAmmo, weapon.MaxMagazine);
         isReloading = false;
         reloadRoutine = null;
     }
