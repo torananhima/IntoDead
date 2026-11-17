@@ -13,7 +13,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] float barLerpSpeed = 3f;
     [SerializeField] Image staminaBar_image;
     [Header("Inventory")]
-    [SerializeField] Image[] inventorySlots_image;
+    [SerializeField] InventorySlot[] inventorySlots;
     [SerializeField] Image slotIndicator;
 
     [SerializeField] TMP_Text pistolAmmo_text;
@@ -32,6 +32,7 @@ public class UIManager : MonoBehaviour
     Camera mainCam;
 
     Coroutine HpBarLerp;
+    Coroutine WeaponAmmoLerp;
 
     Color hasItemColor = new Color(1,1,1,1);
     Color noItemColor = new Color(1,1,1, 0);
@@ -60,7 +61,6 @@ public class UIManager : MonoBehaviour
         playerInventory = player.GetComponent<PlayerInventory>();
 
         playerInventory.OnInventoryChanged += ChangeInventorySlot;
-;
 
         player._interact.OnInteractableInRange += ShowInteractIndicator;
         player._interact.OnNoInteractableInRange += HideInteractIndicator;
@@ -91,36 +91,32 @@ public class UIManager : MonoBehaviour
     public void ChangeInventorySlot()
     {
         List<ItemInstance> items = new(playerInventory.Items);
-        for (int i = 0; i < inventorySlots_image.Length; i++)
+
+        for (int i = 0; i < inventorySlots.Length; i++)
         {
-            if (i < items.Count)
+            if (i >= items.Count || items[i] == null || items[i].itemData == null)
             {
-                if (items[i] == null || items[i].itemData == null)
-                {
-                    //inventorySlots_image[i].gameObject.SetActive(false);
-                    //inventorySlots_image[i].sprite = null;
-                    inventorySlots_image[i].color = noItemColor;
-                    continue;
-                }
-                //inventorySlots_image[i].gameObject.SetActive(true);
-                inventorySlots_image[i].color = hasItemColor;
-                inventorySlots_image[i].sprite = items[i].itemData.icon;
-            }
-            else
-            {
-                //inventorySlots_image[i].gameObject.SetActive(false);
-                inventorySlots_image[i].color = noItemColor;
-                inventorySlots_image[i].sprite = null;
-            }
-            if (i >= inventorySlots_image.Length)
-            {
-                Debug.LogWarning("Index out of Image range");
-                break;
+                inventorySlots[i].ClearSlot();
+                continue;
             }
 
+            ItemInstance item = items[i];
+
+            InventoryContext context = new InventoryContext(
+                item.itemData,
+                item.Amount
+            );
+
+            inventorySlots[i].UpdateSlot(context);
         }
+
         ChangeSelectingSlot();
-        UpdateAmmo(new AmmoContext(playerInventory.pistolAmmo, playerInventory.rifleAmmo, playerInventory.sniperAmmo));
+
+        UpdateAmmo(new AmmoContext(
+            playerInventory.pistolAmmo,
+            playerInventory.rifleAmmo,
+            playerInventory.sniperAmmo
+        ));
     }
 
     public void UpdateAmmo(AmmoContext ammoContext)
@@ -131,26 +127,24 @@ public class UIManager : MonoBehaviour
     }
     public void ChangeSelectingSlot()
     {
-        slotIndicator.transform.SetParent(inventorySlots_image[playerInventory.SelectedSlot].transform);
+        slotIndicator.transform.SetParent(
+                inventorySlots[playerInventory.SelectedSlot].ItemIcon.transform
+            );
+        slotIndicator.transform.SetAsFirstSibling();
+
         slotIndicator.GetComponent<RectTransform>().anchoredPosition = Vector3.zero;
 
         ItemInstance holdItem = playerInventory.GetSelectedItem();
-        if (holdItem != null)
-        {
-            if (holdItem.itemData is RangedWeaponData gun)
-            {
-                ShowWeaponAmmo();
-                UpdateWeaponAmmo(holdItem.CurrentAmmo, holdItem.MaxMagazine);
-            }
-            else
-            {
-                HideeWeaponAmmo();
-            }
-        }
-        //RectTransform indicator = slotIndicator.GetComponent<RectTransform>();
-        //RectTransform slot = inventorySlots_image[playerInventory.SelectedSlot].GetComponent<RectTransform>();
 
-        //indicator.position = slot.position;
+        if (holdItem != null && holdItem.itemData is RangedWeaponData)
+        {
+            ShowWeaponAmmo();
+            UpdateWeaponAmmo(holdItem.CurrentAmmo, holdItem.MaxMagazine);
+        }
+        else
+        {
+            HideeWeaponAmmo();
+        }
     }
 
     public void UpdateHpBar(float currentHp, float maxHp)
@@ -184,6 +178,13 @@ public class UIManager : MonoBehaviour
     public void ShowWeaponAmmo()
     {
         weaponAmmoUI.gameObject.SetActive(true);
+
+        if (WeaponAmmoLerp != null)
+        {
+            StopCoroutine(WeaponAmmoLerp);
+            WeaponAmmoLerp = null;
+        }
+        WeaponAmmoLerp = StartCoroutine(UpdateWeaponAmmo());
     }
     public void UpdateWeaponAmmo(int currentAmmo, int maxMagazine)
     {
@@ -192,6 +193,20 @@ public class UIManager : MonoBehaviour
     public void HideeWeaponAmmo()
     {
         weaponAmmoUI.gameObject.SetActive(false);
+        if (WeaponAmmoLerp != null)
+        {
+            StopCoroutine(WeaponAmmoLerp);
+            WeaponAmmoLerp = null;
+        }
+    }
+
+    IEnumerator UpdateWeaponAmmo()
+    {
+        while (true)
+        { 
+            weaponAmmoUI.SetTargetPosition(!IsRightHalfScreen(player._input.MousePos));
+            yield return null;
+        }
     }
     public void ShowInteractIndicator(Transform interactObject, string actionName)
     {

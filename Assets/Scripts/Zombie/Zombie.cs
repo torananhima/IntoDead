@@ -117,8 +117,8 @@ public class Zombie : Character
     protected override void Start()
     {
         base.Start();
-        player = GameManager.player;
-        agent = GetComponent<NavMeshAgent>();
+        if(player == null) player = GameManager.player;
+        if(agent == null) agent = GetComponent<NavMeshAgent>();
 
         if (data) Initilize(data);
 
@@ -151,6 +151,12 @@ public class Zombie : Character
         bool visible = player._los.CanSee(transform);
         viewModel.SetActive(visible);
 
+    }
+
+    protected override void Dead()
+    {
+        base.Dead();
+        ObjectPoolManager.Instance.Despawn(gameObject);
     }
 
     public void ChangeState(ZombieState newState)

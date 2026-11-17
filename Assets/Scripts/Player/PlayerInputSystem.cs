@@ -155,7 +155,10 @@ public class PlayerInputSystem : MonoBehaviour
 
             case "interact":
                 Debug.Log("InteractInput invoke");
-                InputOnInteract?.Invoke();
+                if (lastUsePressed == false && pressed)
+                {
+                    InputOnInteract?.Invoke();
+                }
                 break;
 
             case "drop":

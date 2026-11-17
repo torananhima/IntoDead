@@ -11,6 +11,10 @@ public class InteractIndicator : MonoBehaviour
     [SerializeField] TMP_Text interactAction_text;
     Coroutine InteractIndicatorLerp;
     Vector2 targetPos;
+    public void SetTarger(Vector2 newTarget)
+    {
+        targetPos = newTarget;
+    }
     public void UpdateIndicator(Vector2 screenPos, string actionName)
     {
         int xFlip = UIManager.instance.IsRightHalfScreen(screenPos) ? 1 : -1;
