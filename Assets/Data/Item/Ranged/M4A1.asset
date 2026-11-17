@@ -24,5 +24,5 @@ MonoBehaviour:
   magazineSize: 25
   fireCooldown: 0.2
   reloadDuration: 1.5
-  noiseRadius: 6
+  noiseRadius: 12
   bulletPrefab: {fileID: 4126858333813287010, guid: 951b122fe1804044da3997289bede43f, type: 3}

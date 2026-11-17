@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Hurtbox : MonoBehaviour, IDamageable
 {
-    Character owner;
+    public Character owner {  get; private set; }
 
     private void Awake()
     {

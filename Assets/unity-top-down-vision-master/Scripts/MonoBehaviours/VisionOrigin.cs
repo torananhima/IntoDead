@@ -55,7 +55,7 @@ namespace GrozaGames.TopDownVision.MonoBehaviours
         private NativeArray<ushort> _circleTriangles;
         private NativeArray<Color> _circleColors;
 
-        private void Start()
+        private void Awake()
         {
             _coneGameObject = new GameObject("Cone");
             _coneGameObject.transform.position = transform.position;
@@ -84,6 +84,12 @@ namespace GrozaGames.TopDownVision.MonoBehaviours
             _circleMeshFilter.sharedMesh = _circleMesh;
 
             RecreateCircleData();
+        }
+
+        private void Start()
+        {
+            UpdateCone();
+            UpdateCircle();
         }
 
         private void OnDestroy()
@@ -541,9 +547,8 @@ namespace GrozaGames.TopDownVision.MonoBehaviours
             bool inAmbientRange = distance <= _circleMaxDistance;
 
             Vector3 forward = transform.forward;
-
-
-            forward.y = _originHeightOffset;
+            forward.y = 0f;
+            forward.Normalize();
 
             bool inFlashlight =
                 distance <= _coneMaxDistance &&

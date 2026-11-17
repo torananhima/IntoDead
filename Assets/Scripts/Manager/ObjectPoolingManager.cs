@@ -64,6 +64,7 @@ public class ObjectPoolManager : MonoBehaviour
 
         pool.NotifySpawn(instance);
 
+        instance.SetActive(true);
         return instance;
     }
 
@@ -152,7 +153,6 @@ public class ObjectPoolManager : MonoBehaviour
         private void OnGet(GameObject instance)
         {
             activeInstances.Add(instance);
-            instance.SetActive(true);
         }
 
         private void OnRelease(GameObject instance)

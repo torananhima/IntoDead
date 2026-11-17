@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private InputMode crouchInputMode = InputMode.Toggle;
 
     Player player;
-    CharacterController _controller;
+    public CharacterController _controller { get; private set; }
     public Action OnMove;
 
     private void Awake()
@@ -39,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
         if(sprintInputMode == InputMode.Hold)
         {
             player.isSprinting = pressed;
-        }
+        }else
         if (sprintInputMode == InputMode.Toggle && pressed)
         {
             player.isSprinting = !player.isSprinting;
@@ -61,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
         if (crouchInputMode == InputMode.Hold)
         {
             player.isCrouching = pressed;
-        }
+        }else
         if (crouchInputMode == InputMode.Toggle && pressed)
         {
             player.isCrouching = !player.isCrouching;

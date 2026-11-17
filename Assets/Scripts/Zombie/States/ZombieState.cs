@@ -1,6 +1,14 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+public enum ZombieStates
+{
+    Idle,
+    Roaming,
+    Investigate,
+    Chasing,
+    Attack
+}
 public abstract class ZombieState : IState
 {
     protected Zombie zombie;

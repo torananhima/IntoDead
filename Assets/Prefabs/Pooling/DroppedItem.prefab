@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7519598102215666390}
   - component: {fileID: 1683436251910948251}
   - component: {fileID: 5025084814627418945}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: DroppedItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,7 +129,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DroppedItem
   actionName: Interact
-  pickupEnabled: 0
+  item:
+    amount: 0
+    instanceId: 
+    maxMagazine: 0
+    currentAmmo: 0
   pickupDelay: 0.25
   rb: {fileID: 1683436251910948251}
   spawnForce: {x: 0, y: 0}

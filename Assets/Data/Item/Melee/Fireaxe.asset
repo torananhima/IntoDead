@@ -26,5 +26,5 @@ MonoBehaviour:
   attackCooldown: 1
   attackLayer:
     serializedVersion: 2
-    m_Bits: 4294967295
-  noiseRadius: 6
+    m_Bits: 512
+  noiseRadius: 8

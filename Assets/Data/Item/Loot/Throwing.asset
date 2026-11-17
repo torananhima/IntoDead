@@ -15,7 +15,7 @@ MonoBehaviour:
   items:
   - item: {fileID: 11400000, guid: 7495cb6dc22e9fd43a5174ad960c3f21, type: 2}
     weight: 1
-    minAmount: 1
+    minAmount: 2
     maxAmount: 3
     minMagazineAmmo: 0
     maxMagazineAmmo: 0

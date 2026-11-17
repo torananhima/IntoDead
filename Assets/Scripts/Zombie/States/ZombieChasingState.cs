@@ -3,23 +3,26 @@ using UnityEngine.AI;
 
 public class ZombieChasingState : ZombieState
 {
+    float attackRange;
     public ZombieChasingState(Zombie zombie, NavMeshAgent agent, Player player) : base(zombie, agent, player) { }
 
     public override void Enter()
     {
-        
+        attackRange = zombie.attackRange;
     }
     public override void Loop()
     {
-        float distance = Vector3.Distance(zombie.transform.position, player.transform.position);
         if (zombie.IsInLineOfSight())
         {
-            if (distance < 0.5f)
+            if (zombie.IsPlayerInAttackRange())
             {
-                agent.isStopped = true;
-                //Attack!
+                zombie.ChangeState(new ZombieAttackState(zombie, agent, player));
             }
             agent.SetDestination(player.transform.position);
+        }
+        else if(zombie.IsArrived)
+        {
+            zombie.ChangeState(new ZombieRoamingState(zombie, agent, player));
         }
     }
     public override void Exit()
@@ -28,6 +31,6 @@ public class ZombieChasingState : ZombieState
     }
     public override void OnHeardNoise(Vector3 noisePos)
     {
-        agent.SetDestination(noisePos);
+
     }
 }
