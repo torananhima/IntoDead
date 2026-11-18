@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 7282142047266327684}
   - component: {fileID: 5953906081891730209}
   - component: {fileID: 8450003323349710827}
-  m_Layer: 0
+  - component: {fileID: 3238177066540694104}
+  m_Layer: 7
   m_Name: Fir Tree_3
-  m_TagString: Untagged
+  m_TagString: Environment
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -90,3 +91,26 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &3238177066540694104
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7945630882328385086}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.1841669
+  m_Height: 4.69322
+  m_Direction: 1
+  m_Center: {x: 0.14817935, y: 2.3466105, z: -0.28198165}
