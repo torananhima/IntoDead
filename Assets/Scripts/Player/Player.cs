@@ -26,6 +26,7 @@ public class Player : Character
     [Min(0)][SerializeField] private float walkMultRatio = 1f;
     [Min(0)][SerializeField] private float sprintMultRatio = 1f;
     [Min(0)][SerializeField] private float crouchMultRatio = 1f;
+
     private float moveNoiseProgress;
 
     public PlayerInputSystem _input { get; private set; }
@@ -58,6 +59,7 @@ public class Player : Character
             NoiseSystem.GetInstance().NoiseOccur(NoiseSource.Player, transform.position, moveSpeed * GetNoiseRnage(movementState));
             Debug.Log("Noise occur");
         }
+        currentVelocity = _movement._controller.velocity.magnitude;
     }
 
     public override void TakeDamage(int damageTaken)
@@ -66,6 +68,11 @@ public class Player : Character
         UIManager.instance.UpdateHpBar(hp, maxHp);
     }
 
+    public override void Heal(int healAmount)
+    {
+        base.Heal(healAmount);
+        UIManager.instance.UpdateHpBar(hp, maxHp);
+    }
     IEnumerator HandleMovement()
     {
         if (!_movement) yield return null;

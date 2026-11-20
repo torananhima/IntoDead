@@ -19,6 +19,9 @@ public class ZombieChasingState : ZombieState
                 zombie.ChangeState(new ZombieAttackState(zombie, agent, player));
             }
             agent.SetDestination(player.transform.position);
+        }else if (zombie.IsPlayerInCloseRange())
+        {
+            agent.SetDestination(player.transform.position);
         }
         else if(zombie.IsArrived)
         {

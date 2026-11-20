@@ -76,16 +76,21 @@ MonoBehaviour:
   _crouchSpeed: 5
   changeSpeedRatio: 5
   movementState: 0
+  footstepAudio: {fileID: 11400000, guid: 745ce8df8a61e504e94ac7f8282e872e, type: 2}
+  hurtAudio: {fileID: 11400000, guid: 4313458f709945d47a1518bd9b4bf54e, type: 2}
+  deathAudio: {fileID: 11400000, guid: c0265e3269de0bd40926fbd6dd510942, type: 2}
+  footstepRatio: 1
   isSprinting: 0
   isCrouching: 0
   isDead: 0
   data: {fileID: 11400000, guid: 4164699c09133c84089d3a9a87f34ef8, type: 2}
-  _visionDetectRange: 5
+  _visionDetectAngle: 120
+  _visionDetectRange: 10
   visionObstacle:
     serializedVersion: 2
     m_Bits: 128
   _roamingDistance: 2
-  roamingDelay: {x: 2, y: 5}
+  roamingDelay: {x: 3, y: 7}
   _attackRange: 5
   _attackDamage: 10
   _attackRecovery: 1
@@ -93,6 +98,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   viewModel: {fileID: 3443604304416715015}
+  attackAudio: {fileID: 11400000, guid: 04ece9618c4f43543acd0950c3124b41, type: 2}
   currentActiveState: 0
   isShowDebug: 1
   hitboxPrefab: {fileID: 1160750908957539484, guid: ea77ab85cf341d1429bcafb3d8efe3ca, type: 3}

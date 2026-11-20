@@ -45,9 +45,11 @@ public class ZombieRoamingState : ZombieState
     {
         bool noWall = false;
         Vector3 newRoamingPos = zombie.transform.position;
-        while (!noWall)
+        float distance = zombie.roamingDistance;
+        int attempt = 0;
+        while (!noWall || attempt > 20)
         {
-            Vector2 randomPos = Random.insideUnitCircle * zombie.roamingDistance;
+            Vector2 randomPos = Random.insideUnitCircle * distance;
 
             newRoamingPos.x += randomPos.x;
             newRoamingPos.z += randomPos.y;
@@ -58,6 +60,11 @@ public class ZombieRoamingState : ZombieState
             else
             {
                 noWall = true;
+            }
+            attempt++;
+            if(attempt > 10)
+            {
+                distance /= 2;
             }
         }
         agent.SetDestination(newRoamingPos);

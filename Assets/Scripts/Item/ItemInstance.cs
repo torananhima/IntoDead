@@ -123,8 +123,13 @@ public class ItemInstance
 
         int neededAmmo = maxMagazine - currentAmmo;
         int loadedAmmo = Mathf.Min(neededAmmo, availableAmmo);
-
+        
         currentAmmo += loadedAmmo;
+
+        if(itemData is RangedWeaponData weapon)
+        {
+            SoundManager.Instance.PlaySFX(weapon.reloadAudio);
+        }
 
         return loadedAmmo;
     }

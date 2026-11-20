@@ -45,7 +45,7 @@ public class EnemySpawner : MonoBehaviour
             // Remove selected point so it cannot be selected again.
             availablePoints.RemoveAt(randomIndex);
 
-            ObjectPoolManager.Instance.Spawn(zombiePrefab, point.position, point.rotation);
+            ObjectPoolManager.Instance.Spawn(zombiePrefab, point.position, point.rotation).transform.SetParent(transform);
         }
     }
 }

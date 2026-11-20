@@ -84,6 +84,7 @@ GameObject:
   - component: {fileID: 8026788752683064928}
   - component: {fileID: 1153181438319144381}
   - component: {fileID: 4662368149456387081}
+  - component: {fileID: 9038219589077942192}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -148,6 +149,10 @@ MonoBehaviour:
   _crouchSpeed: 5
   changeSpeedRatio: 5
   movementState: 0
+  footstepAudio: {fileID: 11400000, guid: 745ce8df8a61e504e94ac7f8282e872e, type: 2}
+  hurtAudio: {fileID: 11400000, guid: 4313458f709945d47a1518bd9b4bf54e, type: 2}
+  deathAudio: {fileID: 11400000, guid: c0265e3269de0bd40926fbd6dd510942, type: 2}
+  footstepRatio: 1
   isSprinting: 0
   isCrouching: 0
   isDead: 0
@@ -339,6 +344,21 @@ MonoBehaviour:
   attackRange: 1.5
   hitboxRadius: 1
   attackAngle: 120
+--- !u!114 &9038219589077942192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1962052486442290738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d177577dbbdea24cab06d0a9a640cd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Unstuck
+  unstuckDelay: 1
+  yDefault: 1.5
+  rangeUnstuck: 0.8
 --- !u!1 &2807210979903623148
 GameObject:
   m_ObjectHideFlags: 0
@@ -504,6 +524,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraScript
   followObject: {fileID: 1962052486442290738}
+  offset: {x: 0, y: 0, z: 0}
   camSpeed: 5
 --- !u!1 &2811853392002387803
 GameObject:

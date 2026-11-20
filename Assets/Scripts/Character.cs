@@ -17,7 +17,15 @@ public class Character : MonoBehaviour
     [SerializeField] protected float _crouchSpeed = 5f;
     [SerializeField] protected float changeSpeedRatio = 5f;
     protected float newSpeed;
+    protected float currentVelocity;
     [SerializeField] protected MovementType movementState;
+    
+    [Header("Audio")]
+    [SerializeField] protected AudioData footstepAudio;
+    [SerializeField] protected AudioData hurtAudio;
+    [SerializeField] protected AudioData deathAudio;
+    [SerializeField] protected float footstepRatio = 1f;
+    protected float footstepProgress;
     public int maxHp
     {
         get
@@ -86,6 +94,7 @@ public class Character : MonoBehaviour
         if (isDead) return;
         isDead = true;
         Debug.Log(gameObject.name + " is dead.");
+        if (!isDead) SoundManager.Instance.PlaySFX(deathAudio, transform.position);
     }
 
     public virtual void TakeDamage(int damageTaken)
@@ -95,6 +104,7 @@ public class Character : MonoBehaviour
             return;
 
         hp -= damageTaken;
+        if (!isDead) SoundManager.Instance.PlaySFX(hurtAudio, transform.position);
     }
 
     public virtual void Heal(int healAmount)
@@ -118,5 +128,20 @@ public class Character : MonoBehaviour
                 newSpeed = crouchSpeed;
                 break;
         }
+    }
+
+    protected virtual void UpdateFootstepProgress()
+    {
+        footstepProgress += footstepRatio * currentVelocity;
+        if(footstepProgress >= 1)
+        {
+            footstepProgress = 0;
+            PlayFootstepSound();
+        }
+    }
+
+    protected virtual void PlayFootstepSound()
+    {
+        SoundManager.Instance.PlaySFX(footstepAudio, transform.position);
     }
 }

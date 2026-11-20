@@ -37,4 +37,8 @@ public class RangedWeaponData : ItemData
     public float reloadDuration = 1.5f;
     public float noiseRadius;
     public GameObject bulletPrefab;
+    
+    [Header("Audio")]
+    public AudioData fireAudio;
+    public AudioData reloadAudio;
 }
