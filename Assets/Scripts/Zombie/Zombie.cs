@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Zombie : Character
+public class Zombie : Character, IPoolable
 {
     [Header("Data")]
     [SerializeField] ZombieData data;
@@ -26,6 +26,7 @@ public class Zombie : Character
 
     [Header("Reference")]
     [SerializeField] GameObject viewModel;
+    [SerializeField] Animator animator;
 
     [Header("Audio")]
     [SerializeField] private AudioData attackAudio;
@@ -77,6 +78,11 @@ public class Zombie : Character
         get;
         private set;
     }
+
+    int speedAnimHash = Animator.StringToHash("Speed");
+    int isMovingAnimHash = Animator.StringToHash("IsMoving");
+    int attackAnimHash = Animator.StringToHash("Attack");
+    int deadAnimHash = Animator.StringToHash("Dead");
     ZombieState currentState;
     NavMeshAgent agent;
     public bool IsArrived => !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance;
@@ -149,9 +155,11 @@ public class Zombie : Character
         base.Start();
         if(player == null) player = GameManager.player;
         if(agent == null) agent = GetComponent<NavMeshAgent>();
+        if (animator == null) animator = GetComponent<Animator>();
 
         if (data) Initilize(data);
 
+        agent.isStopped = false;
         ChangeState(new ZombieIdleState(this, agent, player));
     }
     public void Initilize(ZombieData newData)
@@ -184,6 +192,9 @@ public class Zombie : Character
         bool visible = player._los.CanSee(transform);
         viewModel.SetActive(visible);
         currentVelocity = agent.velocity.magnitude;
+        animator.SetFloat(speedAnimHash, currentVelocity);
+        if(currentVelocity != 0) animator.SetBool(isMovingAnimHash, true);
+        else animator.SetBool(isMovingAnimHash, false);
     }
 
     public override void TakeDamage(int damageTaken)
@@ -193,6 +204,12 @@ public class Zombie : Character
     protected override void Dead()
     {
         base.Dead();
+        agent.isStopped = true;
+        animator.SetTrigger(deadAnimHash);
+    }
+
+    public void Despawn()
+    {
         ObjectPoolManager.Instance.Despawn(gameObject);
     }
 
@@ -241,6 +258,11 @@ public class Zombie : Character
 
     public void DoAttack()
     {
+        animator.SetTrigger(attackAnimHash);
+    }
+
+    public void CastAttackHitbox()
+    {
         Debug.Log("Do attack");
         Vector3 attackPos = transform.position + transform.forward * data.attackRange;
         Collider[] cols = Physics.OverlapSphere(attackPos, data.attackHitbox, attackLayer, QueryTriggerInteraction.Collide);
@@ -255,9 +277,9 @@ public class Zombie : Character
         }
         foreach (Collider col in cols)
         {
-            if(col.TryGetComponent(out Hurtbox hurtbox))
+            if (col.TryGetComponent(out Hurtbox hurtbox))
             {
-                if(hurtbox.owner is Player)
+                if (hurtbox.owner is Player)
                 {
                     hurtbox.TakeDamage((int)attackDamage);
                     Debug.Log("<color=red>Hit Player</color>");
@@ -337,5 +359,15 @@ public class Zombie : Character
 
             Gizmos.DrawSphere(transform.position + Vector3.up * 3, 0.5f);
         }
+    }
+
+    public void OnPoolSpawn()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void OnPoolDespawn()
+    {
+        gameObject.SetActive(false);
     }
 }

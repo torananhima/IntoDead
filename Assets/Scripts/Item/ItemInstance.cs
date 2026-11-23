@@ -83,6 +83,17 @@ public class ItemInstance
 
         return amount;
     }
+    public bool CanHoldUse()
+    {
+        if(itemData is RangedWeaponData gun)
+        {
+            if(gun.shootType == ShootType.Automatic)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // Returns the remaining amount.
     public int RemoveAmount(int amountToRemove)

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68134a03a70fb334d8ffb1df40d6b77b, type: 3}
-  m_Name: PlayerAudio
+  m_Name: PlayerFootstep
   m_EditorClassIdentifier: Assembly-CSharp::AudioData
   clips: []
   volume: 1

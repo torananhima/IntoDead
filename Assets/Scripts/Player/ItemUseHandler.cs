@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using static UnityEngine.InputSystem.OnScreen.OnScreenStick;
 
 public class ItemUseHandler : MonoBehaviour
 {
@@ -25,6 +26,7 @@ public class ItemUseHandler : MonoBehaviour
 
     private Coroutine cooldownRoutine;
     private Coroutine reloadRoutine;
+    private Coroutine holdUseRoutine;
     private bool hasStarted;
     public Action<int, int> OnWeaponAmmoChange;
     public Transform FirePoint => firePoint != null
@@ -87,6 +89,8 @@ public class ItemUseHandler : MonoBehaviour
         player._input.InputOnUse += TryUseSelectedItem;
         player._input.InputOnReload += TryReload;
     }
+
+
     public void TryUseSelectedItem()
     {
         if (isOnAttackCooldown || isReloading)
@@ -109,11 +113,34 @@ public class ItemUseHandler : MonoBehaviour
         if (item.IsEmpty)
         {
             inventory.TryRemoveItem(item);
+            if(holdUseRoutine != null)
+            {
+                StopCoroutine(holdUseRoutine);
+                holdUseRoutine = null;
+            }
         }
         else
         {
             inventory.NotifyInventoryChanged();
+            if (item.CanHoldUse())
+            {
+                if(holdUseRoutine == null)
+                {
+                    holdUseRoutine = StartCoroutine(HoldUsing());
+                }
+            }
         }
+    }
+
+    IEnumerator HoldUsing()
+    {
+        while (player._input.isHoldUse)
+        {
+            TryUseSelectedItem();
+            yield return null;
+        }
+
+        holdUseRoutine = null;
     }
 
     public void TryReload()
@@ -147,6 +174,7 @@ public class ItemUseHandler : MonoBehaviour
 
         Debug.Log("Reloading...");
 
+        UIManager.instance.ShowItemDelay(weaponData.reloadDuration);
         yield return new WaitForSeconds(weaponData.reloadDuration);
 
         // Cancel if the player changed their selected weapon.
@@ -212,6 +240,7 @@ public class ItemUseHandler : MonoBehaviour
     {
         isOnAttackCooldown = true;
 
+        UIManager.instance.ShowItemDelay(attackCd);
         yield return new WaitForSeconds(attackCd);
 
         isOnAttackCooldown = false;

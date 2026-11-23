@@ -90,6 +90,8 @@ namespace GrozaGames.TopDownVision.MonoBehaviours
         {
             UpdateCone();
             UpdateCircle();
+            _coneGameObject.transform.position = transform.position + Vector3.up * _originHeightOffset;
+            _circleGameObject.transform.position = transform.position + Vector3.up * _originHeightOffset;
         }
 
         private void OnDestroy()

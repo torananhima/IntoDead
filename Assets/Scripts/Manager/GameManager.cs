@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using UnityEngine.AdaptivePerformance;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public enum GameState
 {
@@ -21,10 +23,12 @@ public class GameManager : MonoBehaviour
     public static Action OnUnPaused;
 
     public static Action OnGameEnd;
+    [SerializeField] InputActionReference pauseInput;
+    bool wasPressedPause;
 
     public static GameManager GetInstance()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = new GameManager();
         }
@@ -32,20 +36,31 @@ public class GameManager : MonoBehaviour
     }
     private void Awake()
     {
-        if(instance != null && instance != this)
+        if (instance != null && instance != this)
         {
             Destroy(gameObject);
             return;
         }
         instance = this;
         player = FindAnyObjectByType<Player>().GetComponent<Player>();
+
+        Time.timeScale = 1;
     }
 
     private void Update()
     {
         gameTimer += Time.deltaTime;
     }
+    private void OnEnable()
+    {
+        pauseInput.action.performed += TogglePause;
+        SceneManager.sceneLoaded += OnSceneLoad;
+    }
 
+    private void OnDisable()
+    {
+        pauseInput.action.performed -= TogglePause;
+    }
     public void ChangeGameState(GameState newState)
     {
         switch (newState)
@@ -69,5 +84,39 @@ public class GameManager : MonoBehaviour
                 break;
 
         }
+    }
+
+    private void OnSceneLoad(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        Time.timeScale = 1;
+    }
+
+    private void TogglePause(InputAction.CallbackContext context)
+    {
+        if (context.action.IsPressed())
+        {
+            if (currentGameState == GameState.Paused)
+            {
+                ChangeGameState(GameState.Gameplay);
+                OnUnPaused?.Invoke();
+            }
+            else
+            {
+                ChangeGameState(GameState.Paused);
+                OnPaused?.Invoke();
+            }
+        }
+    }
+    public void Pause()
+    {
+        if (currentGameState == GameState.Paused) return;
+        ChangeGameState(GameState.Paused);
+        OnPaused?.Invoke();
+    }
+    public void UnPause()
+    {
+        if (currentGameState == GameState.Gameplay) return;
+        ChangeGameState(GameState.Gameplay);
+        OnUnPaused?.Invoke();
     }
 }

@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] Image hpBarFollow_image;
     [SerializeField] float barLerpSpeed = 3f;
     [SerializeField] Image staminaBar_image;
+    [SerializeField] Image movementState_image;
     [Header("Inventory")]
     [SerializeField] InventorySlot[] inventorySlots;
     [SerializeField] Image slotIndicator;
@@ -23,6 +24,7 @@ public class UIManager : MonoBehaviour
 
     [Header("Indicator")]
     [SerializeField] InteractIndicator interactIndicator;
+    [SerializeField] ItemUsedIndicator itemUsedIndicator;
 
     private float halfWidthScreen;
     private float halfHeightScreen;
@@ -121,9 +123,18 @@ public class UIManager : MonoBehaviour
 
     public void UpdateAmmo(AmmoContext ammoContext)
     {
-        pistolAmmo_text.text = $"P {ammoContext.pistolAmmo}";
-        rifleAmmo_text.text = $"R {ammoContext.rifleAmmo}";
-        sniperAmmo_text.text = $"S {ammoContext.sniperAmmo}";
+        pistolAmmo_text.text = $"{ammoContext.pistolAmmo}";
+        rifleAmmo_text.text = $"{ammoContext.rifleAmmo}";
+        sniperAmmo_text.text = $"{ammoContext.sniperAmmo}";
+    }
+
+    public void ShowItemDelay(float delay)
+    {
+        itemUsedIndicator.Initialize(delay);
+    }
+    public void HideItemDelay()
+    {
+        itemUsedIndicator.Hide();
     }
     public void ChangeSelectingSlot()
     {
@@ -167,8 +178,11 @@ public class UIManager : MonoBehaviour
             hpBarFollow_image.fillAmount = Mathf.Lerp(hpBarFollow_image.fillAmount, fillAmount, Time.deltaTime * barLerpSpeed);
             yield return null;
         }
-        StopCoroutine(HpBarLerp);
-        HpBarLerp = null;
+        if (HpBarLerp != null)
+        {
+            StopCoroutine(HpBarLerp);
+            HpBarLerp = null;
+        }
     }
     public void UpdateStaminaBar(float currentStamina, float maxStamina)
     {
@@ -218,5 +232,14 @@ public class UIManager : MonoBehaviour
     public void HideInteractIndicator()
     {
         interactIndicator.Hide();
+    }
+
+    public void ChangeMovementState(Sprite newSprite)
+    {
+        if (newSprite == null) return;
+        if(movementState_image != null)
+        {
+            movementState_image.sprite = newSprite;
+        }
     }
 }
