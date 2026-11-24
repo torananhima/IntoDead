@@ -21,6 +21,7 @@ public class PlayerInputSystem : MonoBehaviour
     public event Action<bool> InputOnSprint;
     public event Action<bool> InputOnCrouch;
     public event Action InputOnUse;
+    public bool isHoldUse;
     public event Action InputOnInteract;
     public event Action InputOnDrop;
     public event Action InputOnReload;
@@ -130,7 +131,9 @@ public class PlayerInputSystem : MonoBehaviour
 
         // Emit events only when the state actually changes.
         if (previousState == pressed)
+        {
             return;
+        }
 
         buttonStates[actionName] = pressed;
 
@@ -148,8 +151,17 @@ public class PlayerInputSystem : MonoBehaviour
 
             case "use":
                 Debug.Log("UseInput invoke");
-                if(lastUsePressed == false && pressed){
-                    InputOnUse?.Invoke();
+                if(pressed)
+                {
+                    if (lastUsePressed == false)
+                    {
+                        isHoldUse = true;
+                        InputOnUse?.Invoke();
+                    }
+                }
+                else
+                {
+                    isHoldUse = false;
                 }
                 break;
 

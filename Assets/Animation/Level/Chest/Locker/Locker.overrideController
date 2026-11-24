@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Locker
+  m_Controller: {fileID: 9100000, guid: d3cf1355d03e698489306c9857bb1148, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 07df04cf443f51b42b1eb9ed53313086, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 2995a37142ad79a49a39f31608867a51, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: a5e176f8778129f438cb934aa6cf578e, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 1425c9e808fe3794a8780cb599e9e445, type: 2}

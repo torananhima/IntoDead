@@ -18,12 +18,15 @@ public class WorldContainer : InteractableObject
     [SerializeField] private GameObject droppedItemPrefab;
     [SerializeField] private Transform dropPoint;
     [SerializeField] private float dropRadius = 0.5f;
+    [Header("Refernce")]
+    [SerializeField] private Animator animator;
 
     public bool IsOpened => opened;
 
     private void Awake()
     {
         InitializeLoot();
+        if(animator == null) animator = GetComponent<Animator>();
     }
 
     // --------------------------------------------------
@@ -155,13 +158,17 @@ public class WorldContainer : InteractableObject
         if (!CanInteract(interactor))
             return;
 
-        OpenAndDropContents();
+        animator.SetTrigger("Open");
     }
 
     // --------------------------------------------------
     // RELEASE LOOT
     // --------------------------------------------------
 
+    public void OpenContainer()
+    {
+        OpenAndDropContents();
+    }
     private void OpenAndDropContents()
     {
         if (ObjectPoolManager.Instance == null)

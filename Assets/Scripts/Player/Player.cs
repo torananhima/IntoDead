@@ -6,6 +6,10 @@ using UnityEngine;
 
 public class Player : Character
 {
+    [Header("UI")]
+    [SerializeField] private Sprite walkSprite;
+    [SerializeField] private Sprite sprintSprite;
+    [SerializeField] private Sprite crouchSprite;
     [Header("Stamina")]
     [SerializeField] private float maxStamina = 100;
 
@@ -26,6 +30,7 @@ public class Player : Character
     [Min(0)][SerializeField] private float walkMultRatio = 1f;
     [Min(0)][SerializeField] private float sprintMultRatio = 1f;
     [Min(0)][SerializeField] private float crouchMultRatio = 1f;
+
     private float moveNoiseProgress;
 
     public PlayerInputSystem _input { get; private set; }
@@ -43,11 +48,28 @@ public class Player : Character
         _interact = GetComponent<PlayerInteract>();
         _movement = GetComponent<PlayerMovement>();
         _itemHandler = GetComponent<ItemUseHandler>();
+    }
+
+    protected override void Start()
+    {
+        base.Start();
         ChangeMovement(MovementType.Walk);
 
         StartCoroutine(HandleMovement());
 
         StartCoroutine(HandleStamina());
+    }
+
+    private void OnEnable()
+    {
+        GameManager.OnPaused += OnPause;
+        GameManager.OnUnPaused += OnUnPause;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.OnPaused -= OnPause;
+        GameManager.OnUnPaused -= OnUnPause;
     }
     protected override void Update()
     {
@@ -58,6 +80,7 @@ public class Player : Character
             NoiseSystem.GetInstance().NoiseOccur(NoiseSource.Player, transform.position, moveSpeed * GetNoiseRnage(movementState));
             Debug.Log("Noise occur");
         }
+        currentVelocity = _movement._controller.velocity.magnitude;
     }
 
     public override void TakeDamage(int damageTaken)
@@ -66,29 +89,34 @@ public class Player : Character
         UIManager.instance.UpdateHpBar(hp, maxHp);
     }
 
+    public override void Heal(int healAmount)
+    {
+        base.Heal(healAmount);
+        UIManager.instance.UpdateHpBar(hp, maxHp);
+    }
     IEnumerator HandleMovement()
     {
         if (!_movement) yield return null;
         if (CanMove()) yield return null;
-        float timer = 0;
+        //float timer = 0;
         while (true)
         {
             if (_input.MoveInput != Vector2.zero) moveNoiseProgress += moveSpeed * noiseProgressRatio * Time.deltaTime;
             _movement.Move(_input.MoveInput, moveSpeed);
             _movement.Look(_input.MousePos);
 
-            if (_input.MoveInput == Vector2.zero)
-            {
-                timer += Time.deltaTime;
-                if (timer >= 0.1f)
-                {
-                    _movement.ResetMovementState();
-                }
-            }
-            else
-            {
-                timer = 0;
-            }
+            //if (_input.MoveInput == Vector2.zero)
+            //{
+            //    timer += Time.deltaTime;
+            //    if (timer >= 0.1f)
+            //    {
+            //        _movement.ResetMovementState();
+            //    }
+            //}
+            //else
+            //{
+            //    timer = 0;
+            //}
             yield return null;
         }
     }
@@ -98,7 +126,7 @@ public class Player : Character
         float recoveryTimer = 0;
         while (true)
         {
-            if(movementState == MovementType.Sprint)
+            if(movementState == MovementType.Sprint && currentVelocity != 0)
             {
                 currentStamina -= Time.deltaTime * sprintDrainRate;
                 recoveryTimer = recoveryDelay;
@@ -159,15 +187,33 @@ public class Player : Character
             case MovementType.Walk:
                 newSpeed = walkSpeed;
                 movementState = MovementType.Walk;
+                UIManager.instance.ChangeMovementState(walkSprite);
                 break;
             case MovementType.Sprint:
                 newSpeed = runSpeed;
                 movementState = MovementType.Sprint;
+                UIManager.instance.ChangeMovementState(sprintSprite);
                 break;
             case MovementType.Crouch:
                 newSpeed = crouchSpeed;
                 movementState = MovementType.Crouch;
+                UIManager.instance.ChangeMovementState(crouchSprite);
                 break;
         }
+    }
+
+    private void OnPause()
+    {
+        ChangeInput(false);
+    }
+    private void OnUnPause()
+    {
+        ChangeInput(true);
+    }
+    public void ChangeInput(bool canInput)
+    {
+        if (_input == null) return;
+        
+        _input.enabled = canInput;
     }
 }

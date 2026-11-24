@@ -83,6 +83,17 @@ public class ItemInstance
 
         return amount;
     }
+    public bool CanHoldUse()
+    {
+        if(itemData is RangedWeaponData gun)
+        {
+            if(gun.shootType == ShootType.Automatic)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // Returns the remaining amount.
     public int RemoveAmount(int amountToRemove)
@@ -123,8 +134,13 @@ public class ItemInstance
 
         int neededAmmo = maxMagazine - currentAmmo;
         int loadedAmmo = Mathf.Min(neededAmmo, availableAmmo);
-
+        
         currentAmmo += loadedAmmo;
+
+        if(itemData is RangedWeaponData weapon)
+        {
+            SoundManager.Instance.PlaySFX(weapon.reloadAudio);
+        }
 
         return loadedAmmo;
     }

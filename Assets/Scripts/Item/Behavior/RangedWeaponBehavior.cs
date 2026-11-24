@@ -55,7 +55,7 @@ public class RangedWeaponBehavior : IItemBehavior
         );
 
         handler.inventory.NotifyInventoryChanged();
-
+        SoundManager.Instance.PlaySFX(weaponData.fireAudio);
         // Start cooldown only after a successful shot.
         handler.StartAttackCooldown(weaponData.fireCooldown);
         handler.OnWeaponAmmoChange?.Invoke(context.itemInstance.CurrentAmmo, context.itemInstance.MaxMagazine);

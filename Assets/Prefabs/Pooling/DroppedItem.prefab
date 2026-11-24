@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a4af6b9ec4b50f49b454b9a2c5231e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DroppedItem
-  actionName: Interact
+  actionName: Pick up
   item:
     amount: 0
     instanceId: 

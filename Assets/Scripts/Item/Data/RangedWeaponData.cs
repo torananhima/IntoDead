@@ -7,6 +7,11 @@ public enum AmmoType
     Rifle,
     Sniper
 }
+public enum ShootType
+{
+    Single,
+    Automatic
+}
 
 public struct AmmoContext
 {
@@ -26,6 +31,7 @@ public struct AmmoContext
 public class RangedWeaponData : ItemData
 {
     public AmmoType ammoType;
+    public ShootType shootType;
     public int damage;
     public int magazineSize;
     [Header("Firing")]
@@ -37,4 +43,8 @@ public class RangedWeaponData : ItemData
     public float reloadDuration = 1.5f;
     public float noiseRadius;
     public GameObject bulletPrefab;
+    
+    [Header("Audio")]
+    public AudioData fireAudio;
+    public AudioData reloadAudio;
 }

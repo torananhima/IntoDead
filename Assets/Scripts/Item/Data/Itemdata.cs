@@ -4,7 +4,7 @@ public abstract class ItemData : ScriptableObject
 {
     public enum ItemType
     {
-        MeleeWeapon, RangedWeapon, HealingItem, ThrowableItem
+        MeleeWeapon, RangedWeapon, HealingItem, ThrowableItem, AmmoBox
 
     }
     [SerializeField]private string itemId;

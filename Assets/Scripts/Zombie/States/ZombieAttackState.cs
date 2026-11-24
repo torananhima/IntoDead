@@ -17,6 +17,10 @@ public class ZombieAttackState : ZombieState
         if(attackRecoveryTimer > 0)
         {
             attackRecoveryTimer -= Time.deltaTime;
+            if (zombie.IsInLineOfSight())
+            {
+                agent.SetDestination(player.transform.position);
+            }
             return;
         }
 

@@ -88,6 +88,14 @@ public class DroppedItem : InteractableObject, IPoolable
         if (inventory == null)
             return;
 
+        if(item.itemData is AmmoBoxData ammoBox)
+        {
+            inventory.AddAmmo(ammoBox.ammoType, item.Amount);
+            item.RemoveAmount(item.Amount);
+            if (ObjectPoolManager.Instance != null)
+                ObjectPoolManager.Instance.Despawn(gameObject);
+            return;
+        }
         bool fullyAccepted = inventory.TryAddItem(item);
 
         if (fullyAccepted)

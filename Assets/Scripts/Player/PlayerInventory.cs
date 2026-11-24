@@ -340,5 +340,6 @@ public class PlayerInventory : MonoBehaviour
     public void NotifyInventoryChanged()
     {
         OnInventoryChanged?.Invoke();
+        UIManager.instance.HideItemDelay();
     }
 }

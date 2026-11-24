@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour
@@ -23,6 +24,8 @@ public class PlayerMovement : MonoBehaviour
 
         player._input.InputOnSprint += OnSprintInput;
         player._input.InputOnCrouch += OnCrouchInput;
+
+        _controller.Move(new Vector3(0f, -0.01f, 0f));
     }
     private void OnDisable()
     {
